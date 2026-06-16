@@ -1,5 +1,10 @@
 #!/usr/bin/env python3
-"""Heuristic workflow-maturity benchmark for vibe-coding-factory."""
+"""Self-audit workflow rubric for vibe-coding-factory.
+
+This script checks whether the local repository contains the workflow artifacts
+that Vibe Coding Factory claims to provide. It is intentionally not a peer
+benchmark and does not rank this project against named tools.
+"""
 
 from __future__ import annotations
 
@@ -7,17 +12,6 @@ import argparse
 import json
 from pathlib import Path
 from typing import Any
-
-
-PEER_BASELINES = {
-    "BMAD Method": 91,
-    "vibe-coding-factory target": 90,
-    "GitHub Spec Kit": 88,
-    "OpenHands": 86,
-    "SWE-agent": 82,
-    "Task Master": 78,
-    "Aider": 76,
-}
 
 
 DIMENSIONS = [
@@ -75,7 +69,7 @@ DIMENSIONS = [
             ("scripts/verify_factory_run.py", "check_acceptance_contract"),
             ("scripts/verify_factory_run.py", "check_dashboard"),
             ("scripts/validate_factory_schema.py", "BAD_TEXT_MARKERS"),
-            ("scripts/benchmark_factory_skill.py", "PEER_BASELINES"),
+            ("scripts/benchmark_factory_skill.py", "benchmark_type"),
         ],
     },
     {
@@ -117,19 +111,27 @@ DIMENSIONS = [
             ("SKILL.md", "description: Use when"),
             ("agents/openai.yaml", "display_name"),
             ("agents/openai.yaml", "default_prompt"),
-            ("references/benchmark-rubric.md", "Benchmark Rubric"),
+            ("references/benchmark-rubric.md", "Self-Audit Rubric"),
         ],
     },
     {
-        "id": "external_integration_benchmark_evidence",
+        "id": "external_evaluation_readiness",
         "weight": 6,
         "checks": [
             ("references/project-management.md", "worktree"),
             ("references/external-patterns.md", "GitHub"),
-            ("references/benchmark-rubric.md", "Peer Set"),
-            ("scripts/benchmark_factory_skill.py", "PEER_BASELINES"),
+            ("references/benchmark-rubric.md", "External Evaluation Plan"),
+            ("references/benchmark-rubric.md", "No Peer Ranking"),
+            ("scripts/benchmark_factory_skill.py", "limitations"),
         ],
     },
+]
+
+LIMITATIONS = [
+    "This is a local self-audit, not an external benchmark.",
+    "It checks repository artifacts and guardrails, not runtime coding quality.",
+    "It does not compare against named peer projects unless their repositories are independently evaluated with the same harness.",
+    "Evidence of real impact requires scenario suites, before/after case studies, and CI-backed fixtures.",
 ]
 
 
@@ -165,25 +167,18 @@ def score_dimension(root: Path, dimension: dict[str, Any]) -> dict[str, Any]:
 def benchmark(root: Path) -> dict[str, Any]:
     dimensions = [score_dimension(root, item) for item in DIMENSIONS]
     total = round(sum(item["score"] for item in dimensions), 2)
-    peers = dict(PEER_BASELINES)
-    peers["vibe-coding-factory local"] = total
-    ranking = sorted(peers.items(), key=lambda item: item[1], reverse=True)
-    rank = [name for name, _score in ranking].index("vibe-coding-factory local") + 1
     return {
-        "benchmark_type": "heuristic workflow maturity, not runtime coding benchmark",
+        "benchmark_type": "self-audit",
         "score": total,
         "max_score": 100,
-        "rank": rank,
-        "peer_count": len(ranking),
         "dimensions": dimensions,
-        "peer_baselines": PEER_BASELINES,
-        "ranking": [{"name": name, "score": score} for name, score in ranking],
+        "limitations": LIMITATIONS,
     }
 
 
 def print_text(result: dict[str, Any]) -> None:
-    print(f"vibe-coding-factory benchmark: {result['score']:.2f}/100")
-    print(f"rank: {result['rank']}/{result['peer_count']} ({result['benchmark_type']})")
+    print(f"vibe-coding-factory self-audit: {result['score']:.2f}/100")
+    print("type: self-audit (not a peer benchmark)")
     print("")
     print("Dimensions:")
     for item in result["dimensions"]:
@@ -192,9 +187,9 @@ def print_text(result: dict[str, Any]) -> None:
             for failed in item["failed"]:
                 print(f"  missing: {failed}")
     print("")
-    print("Peer ranking:")
-    for item in result["ranking"]:
-        print(f"- {item['name']}: {item['score']}")
+    print("Limitations:")
+    for limitation in result["limitations"]:
+        print(f"- {limitation}")
 
 
 def parse_args() -> argparse.Namespace:

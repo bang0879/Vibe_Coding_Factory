@@ -1,13 +1,13 @@
 ---
 name: vibe-coding-factory
-description: Use when the user asks Codex to build production-oriented apps or features through a vibe-coding factory, agent team, delegated or parallel workflow, project-flow monitor, Discovery Council, Direction Lock, PRD, GTM, design brief, task decomposition, executable acceptance harness, QA/UX/scope/consumer appeal review, revision loop, or visual progress dashboard.
+description: Use when the user asks an AI coding agent to build production-oriented apps or features through a vibe-coding factory, delegated or parallel workflow, project-flow monitor, Discovery Council, Direction Lock, PRD, GTM, design brief, task decomposition, executable acceptance harness, QA/UX/scope/consumer appeal review, revision loop, or visual progress dashboard.
 ---
 
 # Vibe Coding Factory
 
-Use this skill to operate a Codex-only agent factory. Codex acts as the orchestrator and may spawn sub-agents only when the user explicitly asks for agent/team/delegated/parallel work or when this skill is invoked for factory execution.
+Use this skill to operate a runtime-neutral agent factory. The current agent runtime acts as the orchestrator. In a Codex host, Codex may spawn sub-agents only when the user explicitly asks for agent/team/delegated/parallel work or when this skill is invoked for factory execution.
 
-Do not use an external app as the source of truth. Keep the workflow inside Codex and the current project files. The dashboard is a monitor only.
+Do not use an external app as the source of truth. Keep the workflow state in the current project files so the same method can be adapted to Codex, Claude Code, or another coding-agent host. The dashboard is a monitor only.
 
 ## Core Flow
 
@@ -86,7 +86,8 @@ Load only what is needed:
 - For real app depth, option breadth, design durability, and app QA gates, read `references/product-quality.md` before decomposing or implementing any user-facing app.
 - For complete product delivery, read `references/completion-harness.md` before task decomposition and again before marking any user-facing app task `done`.
 - For executable product contracts, deterministic completion checks, and fresh-review gates, read `references/factory-harness.md` before implementation and before final completion.
-- For peer comparison and workflow-maturity scoring, read `references/benchmark-rubric.md` and run `scripts/benchmark_factory_skill.py`.
+- For runtime portability across Codex, Claude Code, and generic coding agents, read `references/runtime-portability.md`.
+- For local self-audit scoring, read `references/benchmark-rubric.md` and run `scripts/benchmark_factory_skill.py`.
 
 ## Operating Rules
 
@@ -110,7 +111,7 @@ Load only what is needed:
 - For complete product requests, create `docs/REQUIREMENTS.md`, `docs/ACCEPTANCE_CONTRACT.json`, `docs/IMPLEMENTATION_PLAN.md`, and `docs/QA_EVIDENCE.md` from the templates before implementation. Keep requirement ids and scenario ids linked to task cards.
 - Run `python "<skill-root>/scripts/verify_factory_run.py" --project-root . --mode all` before reporting any user-facing app task or factory run as complete. Use the installed path of this skill as `<skill-root>`. If the script fails, reopen the responsible task and record the failing check in `.factory/factory-state.json`.
 - When editing this skill's discovery workflow or state schema, run `python scripts/validate_factory_schema.py --skill-root .` from the skill root before calling the update complete.
-- When editing this skill's workflow, monitor, state schema, helper scripts, or validation gates, run `python scripts/benchmark_factory_skill.py --skill-root .` from the skill root and review score regressions before calling the update complete.
+- When editing this skill's workflow, monitor, state schema, helper scripts, or validation gates, run `python scripts/benchmark_factory_skill.py --skill-root .` from the skill root and review self-audit regressions before calling the update complete. Do not present this self-audit as a peer benchmark.
 - For interactive apps, the executable harness is necessary but not sufficient: QA must record browser evidence for two contrasting input/state changes and one edge state when relevant.
 - Before final completion of a user-facing product, use a fresh-context review pass against the diff, acceptance contract, design brief, and QA evidence. Requirement-level gaps reopen the task.
 - If the approved design concept cannot be recognized in the rendered app, mark UX failed and reopen the task. Do not ask the user to catch basic design drift.

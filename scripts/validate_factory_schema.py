@@ -56,9 +56,12 @@ REQUIRED_SKILL_TEXT = [
 ]
 
 REQUIRED_FILES = [
+    "AGENTS.md",
     "agents/openai.yaml",
+    "adapters/claude-code/CLAUDE.md",
     "references/discovery-council.md",
     "references/reporting-sync.md",
+    "references/runtime-portability.md",
     "references/benchmark-rubric.md",
     "templates/decision-brief.md",
     "templates/direction-lock.md",
@@ -67,6 +70,8 @@ REQUIRED_FILES = [
     "templates/risk-register.md",
     "scripts/update_factory_state.py",
     "scripts/benchmark_factory_skill.py",
+    "tests/test_benchmark_integrity.py",
+    "tests/test_runtime_portability.py",
 ]
 
 REQUIRED_DASHBOARD_TEXT = [
@@ -89,6 +94,13 @@ BAD_TEXT_MARKERS = [
     "?꾩",
     "?먮룞",
     "?ㅼ쓬",
+]
+
+FORBIDDEN_BENCHMARK_TEXT = [
+    "PEER_BASELINES",
+    "Peer ranking",
+    "rank:",
+    "vibe-coding-factory target",
 ]
 
 
@@ -158,6 +170,10 @@ def check_text(skill_root: Path, findings: list[str]) -> None:
     skill_text = (skill_root / "SKILL.md").read_text(encoding="utf-8")
     if "description: Use when" not in skill_text.split("---", 2)[1]:
         fail(findings, "frontmatter description must start with Use when and describe triggers")
+    if "Codex-only" in skill_text:
+        fail(findings, "SKILL.md must not claim a Codex-only runtime")
+    if "runtime-neutral" not in skill_text:
+        fail(findings, "SKILL.md must describe the workflow as runtime-neutral")
     for required in REQUIRED_SKILL_TEXT:
         if required not in skill_text:
             fail(findings, f"missing-skill-text: {required}")
@@ -173,9 +189,21 @@ def check_text(skill_root: Path, findings: list[str]) -> None:
             fail(findings, f"missing-monitor-text: {required}")
 
     benchmark = (skill_root / "references" / "benchmark-rubric.md").read_text(encoding="utf-8")
-    for required in ["Peer Set", "Scoring Dimensions", "Total score: 100"]:
+    for required in ["No Peer Ranking", "Scoring Dimensions", "Total score: 100", "External Evaluation Plan"]:
         if required not in benchmark:
             fail(findings, f"missing-benchmark-text: {required}")
+    benchmark_script = (skill_root / "scripts" / "benchmark_factory_skill.py").read_text(encoding="utf-8")
+    for forbidden in FORBIDDEN_BENCHMARK_TEXT:
+        if forbidden in benchmark_script:
+            fail(findings, f"forbidden-benchmark-script-text: {forbidden}")
+    for required in ["benchmark_type", "self-audit", "limitations"]:
+        if required not in benchmark_script:
+            fail(findings, f"missing-benchmark-script-text: {required}")
+
+    portability = (skill_root / "references" / "runtime-portability.md").read_text(encoding="utf-8")
+    for required in ["Codex", "Claude Code", "Generic agents", "Portable Invariants"]:
+        if required not in portability:
+            fail(findings, f"missing-portability-text: {required}")
 
     dashboard = (skill_root / "templates" / "factory-dashboard.html").read_text(encoding="utf-8")
     for required in REQUIRED_DASHBOARD_TEXT:

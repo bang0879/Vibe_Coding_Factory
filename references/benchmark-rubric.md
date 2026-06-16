@@ -1,17 +1,22 @@
-# Benchmark Rubric
+# Self-Audit Rubric
 
-Use this rubric when comparing vibe-coding-factory against public AI coding workflows. It is a workflow-maturity benchmark, not a runtime SWE-bench score.
+Use this rubric to check whether this repository contains the workflow controls it claims to provide. It is not an external benchmark, not a SWE-bench score, and not a claim that Vibe Coding Factory outperforms named tools.
 
-## Peer Set
+## No Peer Ranking
 
-The baseline peers are:
+Do not hand-write scores for other projects. Do not print a rank against public tools unless those repositories were evaluated by the same published harness, on the same revision, with reproducible inputs.
 
-- GitHub Spec Kit: spec-driven development with specify, plan, tasks, analyze, checklist, and implement commands.
-- OpenHands: general software-development agent platform with CLI, local GUI, cloud, SDK, sandboxing, and benchmark/evaluation infrastructure.
-- BMAD Method: agile AI development method with structured workflows, domain agents, adaptive planning depth, and lifecycle coverage.
-- Aider: terminal pair-programming tool with codebase map, git integration, language breadth, and benchmark culture.
-- Task Master: PRD-to-task management workflow for AI coding tools.
-- SWE-agent: issue-fixing agent with SWE-bench orientation and configurable research-grade agent-computer interface.
+Acceptable claims:
+
+- The local repository passed its self-audit.
+- The local repository has or lacks specific workflow artifacts.
+- A separate external evaluation, if added later, produced a reproducible result.
+
+Unacceptable claims:
+
+- This project ranks above named peer tools based on constants.
+- This self-audit proves runtime coding quality.
+- This self-audit proves adoption, maturity, or ecosystem strength.
 
 ## Scoring Dimensions
 
@@ -28,16 +33,26 @@ Total score: 100.
 | Product-quality gates | 10 | QA, UX, consumer appeal, scope audit, browser evidence, and input-driven behavior are required. |
 | Revision and failure-loop control | 7 | Stale artifacts, reopen loops, retry limits, and blockers are explicit. |
 | Skill packaging and discoverability | 6 | Frontmatter, UI metadata, references, templates, and helper scripts are discoverable. |
-| External integration and benchmark evidence | 6 | Git/GitHub/worktree patterns, benchmark script, and comparable peer scoring exist. |
+| External evaluation readiness | 6 | Git/worktree patterns, public limitations, and a path to reproducible scenario evaluation exist. |
 
 ## Interpretation
 
-- 90-100: top-tier workflow method; remaining work is ecosystem/integration depth.
-- 80-89: strong public-tool level; gaps are usually observability, reproducible gates, or product discovery.
+- 90-100: the repository's own workflow artifacts are broadly present.
+- 80-89: strong local workflow coverage, with missing guardrails or packaging gaps.
 - 70-79: useful method but likely depends on operator discipline.
 - Below 70: too many requirements live only in prose.
 
-Recalculate after major workflow, monitor, state schema, or verification changes:
+## External Evaluation Plan
+
+To turn this into a real benchmark, add all of the following:
+
+1. A scenario suite with rough ideas, skip-discovery requests, revision requests, and fake-completion traps.
+2. A reproducible runner that evaluates multiple agent runtimes with the same prompts and project fixtures.
+3. Objective scoring for Direction Lock compliance, artifact quality, monitor freshness, harness failures caught, and rework avoided.
+4. CI that runs the fixtures on every change.
+5. Case studies comparing the same project with and without the factory workflow.
+
+Run the local self-audit after major workflow, monitor, state schema, or verification changes:
 
 ```bash
 python scripts/benchmark_factory_skill.py --skill-root .

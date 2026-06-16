@@ -1,6 +1,6 @@
 # Vibe Coding Factory
 
-Vibe Coding Factory is a Codex skill for turning rough app ideas into monitored, approval-gated build plans before implementation starts.
+Vibe Coding Factory is a runtime-neutral workflow for turning rough app ideas into monitored, approval-gated build plans before implementation starts. It ships as a Codex skill, with portable entrypoints for other coding-agent hosts.
 
 It is designed for builders who want the speed of vibe coding without letting an agent silently choose the product direction, scope, stack, or business assumptions on its own.
 
@@ -27,7 +27,7 @@ This skill makes the agent stop at the right moments:
 5. Plan from the lock.
 6. Build only after gates pass.
 
-## Install
+## Install For Codex
 
 Copy this directory into your Codex skills directory:
 
@@ -41,6 +41,16 @@ Then invoke it in Codex:
 $vibe-coding-factory
 ```
 
+## Runtime Portability
+
+The core workflow does not depend on Codex-specific APIs. Codex is the primary packaged skill host, but the state schema, monitor, templates, and verification scripts are plain files.
+
+- Codex: use `SKILL.md` and `agents/openai.yaml`.
+- Claude Code: use `adapters/claude-code/CLAUDE.md`.
+- Generic coding agents: use `AGENTS.md` and the scripts/templates directly.
+
+The portable invariants are documented in `references/runtime-portability.md`.
+
 ## Repository Layout
 
 - `SKILL.md`: main skill instructions and operating rules.
@@ -48,10 +58,12 @@ $vibe-coding-factory
 - `templates/`: state schema, monitor dashboard, reports, task cards, and product contract templates.
 - `scripts/`: validation, state update, factory-run verification, and benchmark helpers.
 - `agents/openai.yaml`: Codex UI metadata.
+- `AGENTS.md`: host-neutral agent entrypoint.
+- `adapters/`: host-specific adapter instructions.
 
 ## Compatibility With Other Skills
 
-This skill is meant to orchestrate product-direction and factory workflow. It can be used with other Codex skills, including Superpowers, as long as responsibilities are kept clear:
+This workflow is meant to orchestrate product-direction and factory control. It can be used with other skills or host-native workflows, including Superpowers, as long as responsibilities are kept clear:
 
 - Vibe Coding Factory owns discovery, Direction Lock, monitor state, approval gates, task flow, and factory completion checks.
 - TDD, debugging, verification, frontend, GitHub, or platform-specific skills may be used as specialist helpers during the appropriate phase.
@@ -66,13 +78,13 @@ Run the schema and packaging validation:
 python scripts/validate_factory_schema.py --skill-root .
 ```
 
-Run the workflow-maturity benchmark:
+Run the local self-audit:
 
 ```bash
 python scripts/benchmark_factory_skill.py --skill-root .
 ```
 
-The benchmark is a heuristic workflow-maturity rubric, not a runtime SWE-bench score or adoption claim.
+The self-audit checks this repository's own workflow artifacts. It is not a peer benchmark, runtime SWE-bench score, adoption claim, or proof that this project outperforms named tools.
 
 ## Factory Run Verification
 
