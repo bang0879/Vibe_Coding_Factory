@@ -1,0 +1,20 @@
+{
+  "id": "",
+  "time": "",
+  "type": "started",
+  "agent": "orchestrator",
+  "task_id": "",
+  "artifact_id": "",
+  "message_id": "",
+  "message": "",
+  "status": "running",
+  "input_summary": "",
+  "output_summary": "",
+  "files": [],
+  "checks": {
+    "passed": 0,
+    "total": 0,
+    "summary": ""
+  },
+  "next": ""
+}

@@ -1,0 +1,387 @@
+{
+  "factory": {
+    "name": "vibe-coding-factory",
+    "mode": "codex-only",
+    "schema_version": 2,
+    "updated_at": "",
+    "summary": "Factory is ready. It updates only when Codex runs the vibe-coding-factory skill."
+  },
+  "project": {
+    "name": "Untitled project",
+    "purpose": "Not defined yet",
+    "target_user": "Not defined yet",
+    "success_criteria": [],
+    "current_phase": "idle",
+    "blocker": ""
+  },
+  "discovery": {
+    "status": "idle",
+    "idea_snapshot": {
+      "raw_user_idea": "",
+      "known_facts": [],
+      "assumptions": [],
+      "unknowns": [],
+      "risk_areas": [],
+      "captured_at": ""
+    },
+    "deep_interview": {
+      "status": "idle",
+      "round": 0,
+      "max_rounds": 5,
+      "latest_question": "",
+      "latest_answer": "",
+      "weakest_open_decision": "",
+      "questions": []
+    },
+    "summary": "",
+    "brief_path": "docs/PROJECT_BRIEF.md",
+    "decision_brief_path": "docs/DECISION_BRIEF.md"
+  },
+  "council_reports": [],
+  "option_matrix": [],
+  "direction_lock": {
+    "status": "idle",
+    "path": "docs/DIRECTION_LOCK.md",
+    "selected_option_id": "",
+    "approved_at": "",
+    "approved_by": "",
+    "locked_items": {
+      "target_user": "",
+      "user_job": "",
+      "product_promise": "",
+      "mvp_scope": [],
+      "non_goals": [],
+      "technical_approach": "",
+      "technical_constraints": [],
+      "workarounds": [],
+      "moat_hypothesis": "",
+      "business_assumptions": [],
+      "design_posture": "",
+      "accepted_risks": [],
+      "open_questions_allowed": []
+    },
+    "source_decision_ids": [],
+    "source_report_ids": [],
+    "handoff_message_ids": [],
+    "stale_reason": ""
+  },
+  "approval_queue": [],
+  "intake": {
+    "status": "idle",
+    "round": 0,
+    "max_rounds": 5,
+    "latest_question": "",
+    "latest_answer": "",
+    "weakest_clarity_area": "",
+    "brief_path": "docs/PROJECT_BRIEF.md",
+    "summary": ""
+  },
+  "plan": {
+    "decision_brief": {
+      "status": "idle",
+      "path": "docs/DECISION_BRIEF.md",
+      "summary": "",
+      "owner": "orchestrator",
+      "approval": "pending"
+    },
+    "direction_lock": {
+      "status": "idle",
+      "path": "docs/DIRECTION_LOCK.md",
+      "summary": "",
+      "owner": "orchestrator",
+      "approval": "pending"
+    },
+    "prd": {
+      "status": "idle",
+      "path": "docs/PRD.md",
+      "summary": "",
+      "owner": "product-strategist",
+      "approval": "pending"
+    },
+    "gtm": {
+      "status": "idle",
+      "path": "docs/GTM.md",
+      "summary": "",
+      "owner": "growth-marketer",
+      "approval": "pending"
+    },
+    "design": {
+      "status": "idle",
+      "brief_path": "docs/DESIGN_BRIEF.md",
+      "options_path": "docs/DESIGN_OPTIONS.md",
+      "concept_status": "idle",
+      "selected_direction": "",
+      "feedback_summary": "",
+      "owner": "design-studio",
+      "approval": "pending"
+    }
+  },
+  "quality_harness": {
+    "status": "idle",
+    "requirements_path": "docs/REQUIREMENTS.md",
+    "acceptance_contract_path": "docs/ACCEPTANCE_CONTRACT.json",
+    "implementation_plan_path": "docs/IMPLEMENTATION_PLAN.md",
+    "qa_evidence_path": "docs/QA_EVIDENCE.md",
+    "real_entrypoint": "",
+    "harness_command": "python \"<skill-root>/scripts/verify_factory_run.py\" --project-root . --mode all",
+    "last_result": "",
+    "last_run_at": "",
+    "failing_checks": [],
+    "fresh_review_status": "idle",
+    "summary": ""
+  },
+  "consensus": {
+    "status": "idle",
+    "iteration": 0,
+    "max_iterations": 3,
+    "planner": {
+      "status": "idle",
+      "verdict": "",
+      "summary": "",
+      "artifact_path": ""
+    },
+    "architect": {
+      "status": "idle",
+      "verdict": "",
+      "summary": "",
+      "artifact_path": ""
+    },
+    "critic": {
+      "status": "idle",
+      "verdict": "",
+      "summary": "",
+      "artifact_path": ""
+    }
+  },
+  "design_concepts": [],
+  "tasks": [],
+  "active_flow": {
+    "task_id": "none",
+    "title": "No active task",
+    "status": "idle",
+    "current_agent": "orchestrator",
+    "goal": "",
+    "steps": [
+      { "agent": "product-strategist", "label": "Product report", "status": "waiting_agent", "summary": "" },
+      { "agent": "technical-feasibility-architect", "label": "Feasibility report", "status": "waiting_agent", "summary": "" },
+      { "agent": "growth-moat-strategist", "label": "Moat report", "status": "waiting_agent", "summary": "" },
+      { "agent": "ux-strategist", "label": "UX report", "status": "waiting_agent", "summary": "" },
+      { "agent": "risk-critic", "label": "Risk report", "status": "waiting_agent", "summary": "" },
+      { "agent": "planner", "label": "Plan options", "status": "waiting_agent", "summary": "" }
+    ]
+  },
+  "messages": [],
+  "decisions": [],
+  "artifacts": [],
+  "revision_loops": [],
+  "gates": [
+    { "id": "idea-snapshot", "name": "Idea Snapshot", "status": "pending", "summary": "" },
+    { "id": "discovery-council", "name": "Discovery Council", "status": "pending", "summary": "" },
+    { "id": "decision-brief", "name": "Decision Brief", "status": "pending", "summary": "" },
+    { "id": "direction-lock", "name": "Direction Lock", "status": "pending", "summary": "" },
+    { "id": "planning-approval", "name": "Planning approval", "status": "pending", "summary": "" },
+    { "id": "consensus-planning", "name": "Consensus planning", "status": "pending", "summary": "" },
+    { "id": "design-concept-approval", "name": "Design concept approval", "status": "pending", "summary": "" },
+    { "id": "design-approval", "name": "Design approval", "status": "pending", "summary": "" },
+    { "id": "qa", "name": "QA", "status": "pending", "summary": "" },
+    { "id": "ux", "name": "UX", "status": "pending", "summary": "" },
+    { "id": "consumer-appeal", "name": "Consumer Appeal", "status": "pending", "summary": "" },
+    { "id": "scope-audit", "name": "Scope audit", "status": "pending", "summary": "" },
+    { "id": "factory-harness", "name": "Factory Harness", "status": "pending", "summary": "" },
+    { "id": "fresh-review", "name": "Fresh review", "status": "pending", "summary": "" },
+    { "id": "report-sync", "name": "Report Sync", "status": "pending", "summary": "" }
+  ],
+  "events": [
+    {
+      "id": "evt-ready",
+      "time": "",
+      "type": "ready",
+      "agent": "orchestrator",
+      "task_id": "",
+      "message": "Factory monitor initialized.",
+      "artifact_id": "",
+      "status": "done"
+    }
+  ],
+  "report_sync": {
+    "status": "pending",
+    "last_state_update_at": "",
+    "last_report_at": "",
+    "last_report_summary": "",
+    "latest_event_id": "evt-ready",
+    "latest_decision_id": "",
+    "monitor_status": "state_only",
+    "monitor_url": "",
+    "state_path": ".factory/factory-state.json",
+    "failed_update_reason": ""
+  },
+  "operator_alerts": [],
+  "monitor_health": {
+    "status": "idle",
+    "state_path": ".factory/factory-state.json",
+    "dashboard_path": ".factory/factory-dashboard.html",
+    "monitor_url_path": ".factory/monitor-url.txt",
+    "meta_path": ".factory/monitor-meta.json",
+    "last_refresh_at": "",
+    "dashboard_sha256": "",
+    "template_sha256": "",
+    "served_url": "",
+    "served_matches_local": false,
+    "stale_reason": ""
+  },
+  "agents": [
+    {
+      "id": "orchestrator",
+      "name": "Codex Factory Orchestrator",
+      "role": "Coordinates discovery, decisions, planning, design, task execution, QA, UX, consumer appeal, scope audit, and monitor sync.",
+      "status": "idle",
+      "current_work": "Waiting for user request",
+      "outputs": [],
+      "talks_to": ["product-strategist", "technical-feasibility-architect", "growth-moat-strategist", "ux-strategist", "risk-critic", "planner", "growth-marketer", "design-studio", "task-decomposer", "engineer", "qa-tester", "ux-checker", "consumer-appeal-reviewer", "scope-auditor"]
+    },
+    {
+      "id": "product-strategist",
+      "name": "Product Strategist",
+      "role": "Turns the idea into target user, JTBD, scope options, workflows, success metrics, and PRD.",
+      "status": "idle",
+      "current_work": "None",
+      "outputs": ["docs/PRD.md"],
+      "talks_to": ["orchestrator", "growth-moat-strategist", "growth-marketer", "design-studio", "task-decomposer"]
+    },
+    {
+      "id": "technical-feasibility-architect",
+      "name": "Technical Feasibility Architect",
+      "role": "Reports feasibility, constraints, impossible parts, workarounds, stack risks, and technical path before planning.",
+      "status": "idle",
+      "current_work": "None",
+      "outputs": ["docs/FEASIBILITY_REPORT.md"],
+      "talks_to": ["orchestrator", "planner", "architect", "risk-critic"]
+    },
+    {
+      "id": "growth-moat-strategist",
+      "name": "Growth and Moat Strategist",
+      "role": "Reports positioning, distribution, monetization, retention, differentiators, and business moat ideas.",
+      "status": "idle",
+      "current_work": "None",
+      "outputs": ["docs/MOAT_STRATEGY.md"],
+      "talks_to": ["orchestrator", "product-strategist", "growth-marketer"]
+    },
+    {
+      "id": "ux-strategist",
+      "name": "UX Strategist",
+      "role": "Reports first-use flow, product feel, information architecture, trust, onboarding, and user-facing complexity risks.",
+      "status": "idle",
+      "current_work": "None",
+      "outputs": ["docs/DESIGN_OPTIONS.md"],
+      "talks_to": ["orchestrator", "design-studio", "ux-checker"]
+    },
+    {
+      "id": "risk-critic",
+      "name": "Risk Critic",
+      "role": "Reports legal, privacy, security, safety, data, operational, execution, and rework risks before Direction Lock.",
+      "status": "idle",
+      "current_work": "None",
+      "outputs": ["docs/RISK_REGISTER.md"],
+      "talks_to": ["orchestrator", "technical-feasibility-architect", "planner", "scope-auditor"]
+    },
+    {
+      "id": "growth-marketer",
+      "name": "Growth Marketer",
+      "role": "Builds positioning, launch path, acquisition, activation, retention strategy, and GTM from the approved Direction Lock.",
+      "status": "idle",
+      "current_work": "None",
+      "outputs": ["docs/GTM.md"],
+      "talks_to": ["orchestrator", "product-strategist", "growth-moat-strategist"]
+    },
+    {
+      "id": "planner",
+      "name": "Planner",
+      "role": "Turns Direction Lock, PRD, GTM, and design constraints into viable build paths, sequencing, dependencies, and implementation plan.",
+      "status": "idle",
+      "current_work": "None",
+      "outputs": ["docs/IMPLEMENTATION_PLAN.md"],
+      "talks_to": ["orchestrator", "architect", "critic", "task-decomposer"]
+    },
+    {
+      "id": "architect",
+      "name": "Architect",
+      "role": "Reviews planning output for architecture boundaries, data flow, integration risk, security, and hidden scope creep.",
+      "status": "idle",
+      "current_work": "None",
+      "outputs": ["architecture review"],
+      "talks_to": ["orchestrator", "planner", "critic"]
+    },
+    {
+      "id": "critic",
+      "name": "Critic",
+      "role": "Reviews plan actionability, acceptance criteria, alternatives, and verification quality.",
+      "status": "idle",
+      "current_work": "None",
+      "outputs": ["planning critique"],
+      "talks_to": ["orchestrator", "planner", "architect"]
+    },
+    {
+      "id": "design-studio",
+      "name": "Design Studio",
+      "role": "Analyzes references, proposes UI directions, critiques usability, and prepares the approved design brief.",
+      "status": "idle",
+      "current_work": "None",
+      "outputs": ["docs/DESIGN_BRIEF.md", "docs/DESIGN_OPTIONS.md"],
+      "talks_to": ["orchestrator", "ux-strategist", "ux-checker", "consumer-appeal-reviewer", "engineer"]
+    },
+    {
+      "id": "task-decomposer",
+      "name": "Task Decomposer",
+      "role": "Breaks approved planning and design into task cards with difficulty, allowed files, checklist, and verification.",
+      "status": "idle",
+      "current_work": "None",
+      "outputs": ["task cards"],
+      "talks_to": ["orchestrator", "engineer", "scope-auditor"]
+    },
+    {
+      "id": "engineer",
+      "name": "Engineer",
+      "role": "Implements one approved task inside allowed files.",
+      "status": "idle",
+      "current_work": "None",
+      "outputs": ["code changes"],
+      "talks_to": ["orchestrator", "qa-tester", "scope-auditor"]
+    },
+    {
+      "id": "qa-tester",
+      "name": "QA Tester",
+      "role": "Runs tests, app checks, and regression checks.",
+      "status": "idle",
+      "current_work": "None",
+      "outputs": ["QA result"],
+      "talks_to": ["orchestrator", "engineer", "ux-checker"]
+    },
+    {
+      "id": "ux-checker",
+      "name": "UX First-user Checker",
+      "role": "Checks whether a first-time user can understand and use the result.",
+      "status": "idle",
+      "current_work": "None",
+      "outputs": ["UX result"],
+      "talks_to": ["orchestrator", "design-studio", "qa-tester", "consumer-appeal-reviewer"]
+    },
+    {
+      "id": "consumer-appeal-reviewer",
+      "name": "Consumer Appeal Reviewer",
+      "role": "Checks whether the result feels attractive, compelling, and product-worthy to a consumer.",
+      "status": "idle",
+      "current_work": "None",
+      "outputs": ["consumer appeal result"],
+      "talks_to": ["orchestrator", "design-studio", "engineer", "ux-checker"]
+    },
+    {
+      "id": "scope-auditor",
+      "name": "Scope Auditor",
+      "role": "Checks changed files against allowed_files and prevents scope drift.",
+      "status": "idle",
+      "current_work": "Watching allowed_files",
+      "outputs": ["scope audit result"],
+      "talks_to": ["orchestrator", "task-decomposer", "engineer", "risk-critic"]
+    }
+  ]
+}

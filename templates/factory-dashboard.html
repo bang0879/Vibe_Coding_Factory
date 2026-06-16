@@ -1,0 +1,618 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>Vibe Coding Factory Monitor</title>
+<style>
+:root {
+  --bg: #f4f5f7;
+  --panel: #ffffff;
+  --text: #172b4d;
+  --muted: #626f86;
+  --line: #dcdfe4;
+  --blue: #0c66e4;
+  --green: #1f845a;
+  --amber: #b38600;
+  --red: #c9372c;
+  --purple: #6e5dc6;
+  --shadow: 0 1px 2px rgba(9,30,66,.16);
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Inter, "Noto Sans KR", "Segoe UI", system-ui, sans-serif;
+  font-size: 13px;
+}
+.topbar {
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 18px;
+  background: #fff;
+  border-bottom: 1px solid var(--line);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 900; }
+.logo {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  display: grid;
+  place-items: center;
+  background: var(--blue);
+  color: #fff;
+  font-weight: 900;
+}
+.top-meta { display: flex; align-items: center; gap: 8px; color: var(--muted); }
+.shell { padding: 16px; display: grid; gap: 12px; }
+.header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: end;
+}
+.crumb { color: var(--muted); margin: 0 0 4px; font-size: 11px; font-weight: 800; }
+h1 { margin: 0; font-size: 24px; letter-spacing: 0; }
+.purpose { margin: 5px 0 0; color: var(--muted); max-width: 980px; line-height: 1.45; }
+.metrics { display: grid; grid-template-columns: repeat(4, 104px); gap: 8px; }
+.metric { background: #fff; border: 1px solid var(--line); border-radius: 7px; padding: 8px 9px; box-shadow: var(--shadow); }
+.metric span { color: var(--muted); font-size: 10px; font-weight: 900; text-transform: uppercase; }
+.metric strong { display: block; margin-top: 2px; font-size: 18px; }
+.toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.source { color: var(--muted); font-size: 10px; overflow-wrap: anywhere; }
+.grid { display: grid; grid-template-columns: minmax(0, 1fr) 390px; gap: 10px; align-items: start; }
+.main, .side { display: grid; gap: 10px; align-items: start; }
+.panel {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  padding: 10px;
+}
+.panel-head { display: flex; align-items: start; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+.panel h2 { margin: 0; font-size: 15px; }
+.panel .hint { margin: 2px 0 0; color: var(--muted); font-size: 11px; line-height: 1.35; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 8px; }
+.mini {
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: #fff;
+  padding: 8px;
+  min-width: 0;
+}
+.mini b { display: block; margin-bottom: 4px; font-size: 12px; overflow-wrap: anywhere; }
+.mini p, .mini li { margin: 3px 0 0; color: var(--muted); font-size: 11px; line-height: 1.38; }
+.mini ul { margin: 5px 0 0; padding-left: 16px; }
+.badge, .tag {
+  display: inline-flex;
+  align-items: center;
+  width: max-content;
+  max-width: 100%;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 10px;
+  line-height: 1.35;
+  font-weight: 900;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  overflow-wrap: anywhere;
+}
+.badge { color: var(--muted); background: #f7f8f9; border-color: var(--line); }
+.badge.done, .badge.approved, .badge.complete, .badge.locked, .badge.synced { color: var(--green); background: #dcfff1; border-color: #baf3db; }
+.badge.running, .badge.reviewing, .badge.current { color: var(--blue); background: #e9f2ff; border-color: #cce0ff; }
+.badge.waiting_user, .badge.waiting_agent, .badge.queued, .badge.pending, .badge.needs_decision, .badge.state_only { color: var(--amber); background: #fff7d6; border-color: #f5cd47; }
+.badge.blocked, .badge.failed, .badge.rejected, .badge.stale, .badge.unavailable { color: var(--red); background: #ffeceb; border-color: #ffd5d2; }
+.tag.strategy { background: #e9f2ff; color: var(--blue); }
+.tag.design { background: #f3f0ff; color: var(--purple); }
+.tag.build { background: #dcfff1; color: var(--green); }
+.tag.verify { background: #fff7d6; color: var(--amber); }
+.tag.audit { background: #ffeceb; color: var(--red); }
+.kv { display: grid; grid-template-columns: 130px minmax(0, 1fr); gap: 5px 8px; }
+.kv span { color: var(--muted); font-size: 10px; font-weight: 900; text-transform: uppercase; }
+.kv strong { font-size: 11px; overflow-wrap: anywhere; }
+.list-row { display: flex; align-items: start; justify-content: space-between; gap: 8px; border-top: 1px solid #edf0f4; padding-top: 7px; margin-top: 7px; }
+.doc-links { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
+button.doc-link, a.doc-link {
+  border: 1px solid var(--line);
+  background: #f7f8f9;
+  color: var(--blue);
+  border-radius: 5px;
+  padding: 4px 6px;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 900;
+  cursor: pointer;
+  text-decoration: none;
+}
+.timeline { display: grid; gap: 6px; }
+.event { display: grid; grid-template-columns: 90px minmax(0, 1fr) auto; gap: 8px; align-items: start; border-top: 1px solid #edf0f4; padding-top: 7px; }
+.event time { color: var(--muted); font-size: 10px; overflow-wrap: anywhere; }
+.agent-map { display: grid; grid-template-columns: repeat(6, minmax(160px, 1fr)); gap: 8px; overflow-x: auto; padding-bottom: 3px; }
+.agent-stage { display: grid; gap: 6px; min-width: 160px; border: 1px solid var(--line); border-radius: 8px; background: #f7f8f9; padding: 7px; }
+.stage-label { font-size: 10px; font-weight: 900; text-transform: uppercase; color: var(--muted); }
+.agent-node { border: 1px solid var(--line); border-radius: 7px; background: #fff; padding: 7px; }
+.agent-node b { font-size: 11px; }
+.agent-node p { margin: 3px 0 0; color: var(--muted); font-size: 10px; line-height: 1.35; }
+.doc-modal { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: 20px; background: rgba(9,30,66,.45); }
+.doc-modal[hidden] { display: none; }
+.doc-modal-card { width: min(880px, 94vw); max-height: 86vh; display: grid; grid-template-rows: auto minmax(0, 1fr); background: #fff; border-radius: 10px; border: 1px solid var(--line); box-shadow: 0 18px 48px rgba(9,30,66,.28); overflow: hidden; }
+.doc-modal-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+.doc-modal-title { font-weight: 900; overflow-wrap: anywhere; }
+.doc-modal-close { border: 1px solid var(--line); background: #f7f8f9; border-radius: 6px; padding: 5px 8px; font: inherit; font-weight: 900; cursor: pointer; }
+.doc-modal-body { margin: 0; overflow: auto; white-space: pre-wrap; background: #0f172a; color: #e2e8f0; padding: 12px; font-family: Consolas, "SFMono-Regular", monospace; font-size: 11px; line-height: 1.5; }
+code { display: inline-block; max-width: 100%; overflow-wrap: anywhere; background: #f1f2f4; border-radius: 4px; padding: 2px 5px; color: #44546f; font-size: 10px; }
+@media (max-width: 1180px) {
+  .header { grid-template-columns: 1fr; }
+  .grid { grid-template-columns: 1fr; }
+  .side { grid-template-columns: repeat(2, minmax(220px, 1fr)); }
+  .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 720px) {
+  .shell { padding: 10px; }
+  .topbar { align-items: start; height: auto; padding: 10px; flex-direction: column; }
+  .side { grid-template-columns: 1fr; }
+  .cards { grid-template-columns: 1fr; }
+  .event { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="brand"><div class="logo">VF</div><span>Vibe Coding Factory Monitor</span></div>
+  <div class="top-meta">
+    <span id="phaseBadge" class="badge">idle</span>
+    <span id="updatedAt">waiting for state</span>
+  </div>
+</header>
+
+<main class="shell">
+  <section class="header">
+    <div>
+      <p class="crumb">Project / Factory Monitor</p>
+      <h1 id="projectName">Factory Monitor</h1>
+      <p class="purpose" id="projectPurpose">Loading factory-state.json.</p>
+    </div>
+    <div class="metrics">
+      <div class="metric"><span>Decisions</span><strong id="decisionMetric">0</strong></div>
+      <div class="metric"><span>Reports</span><strong id="reportMetric">0</strong></div>
+      <div class="metric"><span>Options</span><strong id="optionMetric">0</strong></div>
+      <div class="metric"><span>Tasks</span><strong id="taskMetric">0/0</strong></div>
+    </div>
+  </section>
+
+  <section class="toolbar">
+    <p class="source" id="stateSource">State source pending.</p>
+    <div class="doc-links">
+      <button class="doc-link" data-doc="docs/DECISION_BRIEF.md">Decision Brief</button>
+      <button class="doc-link" data-doc="docs/DIRECTION_LOCK.md">Direction Lock</button>
+      <button class="doc-link" data-doc="docs/PRD.md">PRD</button>
+      <button class="doc-link" data-doc="docs/GTM.md">GTM</button>
+    </div>
+  </section>
+
+  <section class="grid">
+    <div class="main">
+      <section class="panel" data-panel="approval-queue">
+        <div class="panel-head">
+          <div>
+            <h2>Decision Needed</h2>
+            <p class="hint">User approvals and unresolved product direction decisions appear before task cards.</p>
+          </div>
+          <span id="approvalBadge" class="badge">pending</span>
+        </div>
+        <div id="approvalQueue" class="cards"></div>
+      </section>
+
+      <section class="panel" data-panel="direction-lock">
+        <div class="panel-head">
+          <div>
+            <h2>Direction Lock</h2>
+            <p class="hint">Implementation stays frozen until this is approved or explicitly skipped by the user.</p>
+          </div>
+          <span id="directionBadge" class="badge">idle</span>
+        </div>
+        <div id="directionLock"></div>
+      </section>
+
+      <section class="panel" data-panel="discovery-council">
+        <div class="panel-head">
+          <div>
+            <h2>Discovery Council</h2>
+            <p class="hint">Specialist reports shape product options before PRD, GTM, design, or implementation.</p>
+          </div>
+          <span id="discoveryBadge" class="badge">idle</span>
+        </div>
+        <div id="discoveryCouncil" class="cards"></div>
+      </section>
+
+      <section class="panel" data-panel="option-matrix">
+        <div class="panel-head">
+          <div>
+            <h2>Option Matrix</h2>
+            <p class="hint">Concrete product directions, tradeoffs, workarounds, and moat hypotheses.</p>
+          </div>
+          <span id="optionBadge" class="badge">0 options</span>
+        </div>
+        <div id="optionMatrix" class="cards"></div>
+      </section>
+
+      <section class="panel" data-panel="task-roadmap">
+        <div class="panel-head">
+          <div>
+            <h2>Task Roadmap</h2>
+            <p class="hint">Tasks should only appear after Direction Lock and planning gates.</p>
+          </div>
+          <span id="taskSummary" class="badge">0 tasks</span>
+        </div>
+        <div id="taskRoadmap" class="cards"></div>
+      </section>
+    </div>
+
+    <aside class="side">
+      <section class="panel" data-panel="report-sync">
+        <h2>Report Sync</h2>
+        <div id="reportSync"></div>
+      </section>
+      <section class="panel" data-panel="monitor-health">
+        <h2>Monitor Health</h2>
+        <div id="monitorHealth"></div>
+      </section>
+      <section class="panel" data-panel="operator-alerts">
+        <h2>Operator Alerts</h2>
+        <div id="operatorAlerts"></div>
+      </section>
+      <section class="panel" data-panel="handoffs">
+        <h2>Handoffs <span id="handoffBadge" class="badge">0 sent</span></h2>
+        <div id="handoffs"></div>
+      </section>
+      <section class="panel" data-panel="gates">
+        <h2>Gates</h2>
+        <div id="gates"></div>
+      </section>
+      <section class="panel" data-panel="artifacts">
+        <h2>Artifacts</h2>
+        <div id="artifacts"></div>
+      </section>
+    </aside>
+  </section>
+
+  <section class="panel" data-panel="timeline">
+    <div class="panel-head">
+      <div>
+        <h2>Timeline</h2>
+        <p class="hint">Observable events only: decisions, reports, artifacts, task steps, blockers, and monitor updates.</p>
+      </div>
+    </div>
+    <div id="timeline" class="timeline"></div>
+  </section>
+
+  <section class="panel" data-panel="agent-flow">
+    <div class="panel-head">
+      <div>
+        <h2>Agent Flow</h2>
+        <p class="hint">Discovery roles feed Direction Lock; implementation roles only run after approvals.</p>
+      </div>
+    </div>
+    <div id="agentMap" class="agent-map"></div>
+  </section>
+</main>
+
+<div class="doc-modal" id="docModal" hidden>
+  <div class="doc-modal-card" role="dialog" aria-modal="true" aria-labelledby="docModalTitle">
+    <div class="doc-modal-head">
+      <div class="doc-modal-title" id="docModalTitle">Document</div>
+      <button class="doc-modal-close" type="button" data-close-doc>Close</button>
+    </div>
+    <pre class="doc-modal-body" id="docModalBody">Loading document...</pre>
+  </div>
+</div>
+
+<script id="fallback-state" type="application/json">
+{
+  "factory": { "name": "vibe-coding-factory", "schema_version": 2, "updated_at": "unavailable", "summary": "factory-state.json could not be loaded." },
+  "project": { "name": "No state loaded", "purpose": "Serve this dashboard from the active project root so it can fetch .factory/factory-state.json.", "current_phase": "blocked", "blocker": "factory-state.json not loaded" },
+  "discovery": { "status": "blocked", "idea_snapshot": { "raw_user_idea": "", "known_facts": [], "assumptions": [], "unknowns": [], "risk_areas": [] }, "deep_interview": {} },
+  "council_reports": [],
+  "option_matrix": [],
+  "direction_lock": { "status": "blocked", "locked_items": {}, "path": "docs/DIRECTION_LOCK.md" },
+  "approval_queue": [],
+  "report_sync": { "status": "failed", "monitor_status": "unavailable", "latest_event_id": "", "failed_update_reason": "state fetch failed" },
+  "monitor_health": { "status": "unavailable" },
+  "operator_alerts": [],
+  "tasks": [],
+  "agents": [],
+  "events": [],
+  "messages": [],
+  "artifacts": [],
+  "gates": [],
+  "decisions": []
+}
+</script>
+
+<script>
+const STATUS_LABELS = {
+  idle: "idle", queued: "queued", pending: "pending", running: "running", reviewing: "reviewing",
+  waiting_user: "waiting user", waiting_agent: "waiting agent", waiting_direction_lock: "waiting lock",
+  needs_decision: "needs decision", done: "done", complete: "complete", stale: "stale", reopened: "reopened",
+  blocked: "blocked", failed: "failed", approved: "approved", rejected: "rejected", skipped_by_user: "skipped",
+  locked: "locked", watching: "watching", synced: "synced", current: "current", state_only: "state only",
+  unavailable: "unavailable"
+};
+
+const AGENT_STAGES = [
+  { label: "Orchestrate", agents: ["orchestrator"] },
+  { label: "Discover", agents: ["product-strategist", "technical-feasibility-architect", "growth-moat-strategist", "ux-strategist", "risk-critic", "planner"] },
+  { label: "Plan", agents: ["growth-marketer", "architect", "critic"] },
+  { label: "Design", agents: ["design-studio", "task-decomposer"] },
+  { label: "Build", agents: ["engineer"] },
+  { label: "Verify", agents: ["qa-tester", "ux-checker", "consumer-appeal-reviewer", "scope-auditor"] }
+];
+
+const esc = (value) => String(value ?? "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;" }[char]));
+const normalize = (value) => String(value || "idle").toLowerCase().replace(/[^a-z_]/g, "_");
+const statusLabel = (status) => STATUS_LABELS[normalize(status)] || status || "idle";
+const badge = (status) => `<span class="badge ${normalize(status)}">${esc(statusLabel(status))}</span>`;
+const shortList = (items, empty = "none") => Array.isArray(items) && items.length ? items.slice(0, 5).map((item) => `<li>${esc(item)}</li>`).join("") : `<li>${esc(empty)}</li>`;
+const docButton = (path, label) => path ? `<button class="doc-link" data-doc="${esc(path)}">${esc(label || path)}</button>` : "";
+
+async function loadState() {
+  const stateUrl = new URL("./factory-state.json", window.location.href);
+  stateUrl.searchParams.set("ts", Date.now());
+  try {
+    const response = await fetch(stateUrl.href, { cache: "no-store" });
+    if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
+    const state = await response.json();
+    state.__source = stateUrl.href;
+    return state;
+  } catch (error) {
+    const state = JSON.parse(document.getElementById("fallback-state").textContent);
+    state.__source = `blocked: ${stateUrl.href} (${error.message})`;
+    return state;
+  }
+}
+
+function renderApprovalQueue(state) {
+  const queue = state.approval_queue || [];
+  const decisions = (state.decisions || []).filter((decision) => ["waiting_user", "pending", "needs_decision"].includes(normalize(decision.status)));
+  const seen = new Set();
+  const combined = [...queue, ...decisions].filter((item) => {
+    const id = item.id || item.question || JSON.stringify(item);
+    if (seen.has(id)) return false;
+    seen.add(id);
+    return true;
+  }).slice(0, 6);
+  document.getElementById("approvalBadge").textContent = `${combined.length} open`;
+  document.getElementById("approvalQueue").innerHTML = combined.length ? combined.map((item) => `
+    <article class="mini">
+      <b>${esc(item.question || item.id || "Approval needed")} ${badge(item.status || "waiting_user")}</b>
+      <p>Recommended: ${esc(item.recommended || "not set")}</p>
+      <p>Selected: ${esc(item.selected || "waiting")}</p>
+      <div class="doc-links">${(item.related_docs || item.artifact_paths || []).map((path) => docButton(path)).join("")}</div>
+    </article>
+  `).join("") : `<article class="mini"><b>No decision waiting</b><p>The factory can proceed until the next approval gate.</p></article>`;
+}
+
+function renderDirectionLock(state) {
+  const lock = state.direction_lock || {};
+  const items = lock.locked_items || {};
+  document.getElementById("directionBadge").outerHTML = badge(lock.status || "idle").replace("<span", '<span id="directionBadge"');
+  document.getElementById("directionLock").innerHTML = `
+    <div class="cards">
+      <article class="mini">
+        <b>Locked direction</b>
+        <div class="kv">
+          <span>Target user</span><strong>${esc(items.target_user || "not locked")}</strong>
+          <span>User job</span><strong>${esc(items.user_job || "not locked")}</strong>
+          <span>Promise</span><strong>${esc(items.product_promise || "not locked")}</strong>
+          <span>Selected option</span><strong>${esc(lock.selected_option_id || "not selected")}</strong>
+        </div>
+        <div class="doc-links">${docButton(lock.path || "docs/DIRECTION_LOCK.md", "Open Direction Lock")}</div>
+      </article>
+      <article class="mini">
+        <b>MVP scope</b>
+        <ul>${shortList(items.mvp_scope)}</ul>
+      </article>
+      <article class="mini">
+        <b>Non-goals</b>
+        <ul>${shortList(items.non_goals)}</ul>
+      </article>
+      <article class="mini">
+        <b>Technical and moat</b>
+        <p>${esc(items.technical_approach || "Technical path not locked.")}</p>
+        <p>${esc(items.moat_hypothesis || "Moat hypothesis not locked.")}</p>
+      </article>
+    </div>
+  `;
+}
+
+function renderDiscovery(state) {
+  const discovery = state.discovery || {};
+  const snapshot = discovery.idea_snapshot || {};
+  document.getElementById("discoveryBadge").outerHTML = badge(discovery.status || "idle").replace("<span", '<span id="discoveryBadge"');
+  const snapshotCard = `
+    <article class="mini">
+      <b>Idea Snapshot</b>
+      <p>${esc(snapshot.raw_user_idea || discovery.summary || "No raw idea captured yet.")}</p>
+      <p>Unknowns: ${(snapshot.unknowns || []).length} | Risk areas: ${(snapshot.risk_areas || []).length}</p>
+    </article>
+  `;
+  document.getElementById("discoveryCouncil").innerHTML = snapshotCard + renderCouncilReports(state);
+}
+
+function renderCouncilReports(state) {
+  const reports = state.council_reports || [];
+  const reportCards = reports.map((report) => `
+    <article class="mini">
+      <b>${esc(report.agent || report.id)} ${badge(report.verdict || report.status)}</b>
+      <p>${esc(report.summary || "No summary.")}</p>
+      <ul>${shortList(report.top_findings)}</ul>
+      <div class="doc-links">${docButton(report.artifact_path, "Open artifact")}</div>
+    </article>
+  `).join("");
+  return reportCards || `<article class="mini"><b>No council reports yet</b><p>Reports will appear before Direction Lock.</p></article>`;
+}
+
+function renderOptions(state) {
+  const options = state.option_matrix || [];
+  document.getElementById("optionBadge").textContent = `${options.length} options`;
+  document.getElementById("optionMatrix").innerHTML = options.length ? options.map((option) => `
+    <article class="mini">
+      <b>${esc(option.label || option.id)} ${badge(option.status || "candidate")}</b>
+      <p><strong>${esc(option.target_user || "No target")}</strong> - ${esc(option.user_job || "No job")}</p>
+      <p>Moat: ${esc(option.moat_hypothesis || "not set")}</p>
+      <p>Technical path: ${esc(option.technical_path || "not set")}</p>
+      <ul>${shortList(option.risks, "no risks recorded")}</ul>
+    </article>
+  `).join("") : `<article class="mini"><b>No options yet</b><p>The option matrix appears after Discovery Council.</p></article>`;
+}
+
+function renderTasks(state) {
+  const tasks = state.tasks || [];
+  const done = tasks.filter((task) => ["done", "approved", "complete"].includes(normalize(task.status))).length;
+  document.getElementById("taskSummary").textContent = `${done}/${tasks.length} done`;
+  document.getElementById("taskRoadmap").innerHTML = tasks.length ? tasks.map((task, index) => `
+    <article class="mini">
+      <b>${String(index + 1).padStart(2, "0")} ${esc(task.title || task.id)} ${badge(task.status)}</b>
+      <p>${esc(task.goal || task.summary || "No goal recorded.")}</p>
+      <p>Difficulty: ${esc(task.difficulty || "unknown")}</p>
+      <p>Entrypoint: ${esc(task.app_entrypoint || "not set")}</p>
+    </article>
+  `).join("") : `<article class="mini"><b>No tasks yet</b><p>Task cards should be created after Direction Lock and planning approval.</p></article>`;
+  document.getElementById("taskMetric").textContent = `${done}/${tasks.length}`;
+}
+
+function renderSidePanels(state) {
+  const sync = state.report_sync || {};
+  const health = state.monitor_health || {};
+  const alerts = state.operator_alerts || [];
+  const messages = state.messages || [];
+  const gates = state.gates || [];
+  const artifacts = state.artifacts || [];
+  document.getElementById("reportSync").innerHTML = `
+    <div class="mini">
+      <b>${badge(sync.status || "pending")} ${badge(sync.monitor_status || "state_only")}</b>
+      <p>${esc(sync.last_report_summary || "No synced report yet.")}</p>
+      <p>Latest event: <code>${esc(sync.latest_event_id || "none")}</code></p>
+      ${sync.failed_update_reason ? `<p>${esc(sync.failed_update_reason)}</p>` : ""}
+    </div>
+  `;
+  document.getElementById("monitorHealth").innerHTML = `
+    <div class="mini">
+      <b>${badge(health.status || "idle")}</b>
+      <p>Dashboard: <code>${esc(health.dashboard_path || ".factory/factory-dashboard.html")}</code></p>
+      <p>Served URL: <code>${esc(health.served_url || "not set")}</code></p>
+      <p>${esc(health.stale_reason || "No stale reason recorded.")}</p>
+    </div>
+  `;
+  document.getElementById("operatorAlerts").innerHTML = alerts.length ? alerts.slice(-5).reverse().map((alert) => `
+    <div class="mini"><b>${esc(alert.id || "alert")} ${badge(alert.status || "watching")}</b><p>${esc(alert.summary || alert.message || "")}</p></div>
+  `).join("") : `<div class="mini"><b>No operator alerts</b><p>Skipped gates, stale monitor states, and blockers will appear here.</p></div>`;
+  document.getElementById("handoffBadge").textContent = `${messages.length} sent`;
+  document.getElementById("handoffs").innerHTML = messages.length ? messages.slice(-6).reverse().map((message) => `
+    <div class="mini">
+      <b>${esc(message.from || "orchestrator")} -> ${esc(message.to || "unknown")} ${badge(message.status || "sent")}</b>
+      <p>${esc(message.input_summary || "No handoff summary.")}</p>
+      <p>Expected: ${esc(message.expected_output || "not set")}</p>
+    </div>
+  `).join("") : `<div class="mini"><b>No handoffs yet</b><p>Direction Lock and task handoffs will appear here.</p></div>`;
+  document.getElementById("gates").innerHTML = gates.slice(0, 10).map((gate) => `
+    <div class="list-row"><div><b>${esc(gate.name || gate.id)}</b><p>${esc(gate.summary || "")}</p></div>${badge(gate.status)}</div>
+  `).join("") || `<div class="mini"><b>No gates recorded</b></div>`;
+  document.getElementById("artifacts").innerHTML = artifacts.slice(-6).reverse().map((artifact) => `
+    <div class="mini"><b>${esc(artifact.type || artifact.id || "artifact")} ${badge(artifact.status || "done")}</b><p><code>${esc(artifact.path || "no path")}</code></p></div>
+  `).join("") || `<div class="mini"><b>No artifacts yet</b></div>`;
+}
+
+function renderTimeline(state) {
+  const events = (state.events || []).slice(-10).reverse();
+  document.getElementById("timeline").innerHTML = events.length ? events.map((event) => `
+    <div class="event">
+      <time>${esc(event.time || "")}</time>
+      <div><b>${esc(event.type || event.id)}</b><p>${esc(event.message || "")}</p></div>
+      ${badge(event.status || "done")}
+    </div>
+  `).join("") : `<div class="mini"><b>No events yet</b></div>`;
+}
+
+function renderAgentMap(state) {
+  const agents = state.agents || [];
+  const agentById = new Map(agents.map((agent) => [agent.id, agent]));
+  document.getElementById("agentMap").innerHTML = AGENT_STAGES.map((stage) => {
+    const nodes = stage.agents.filter((id) => agentById.has(id)).map((id) => {
+      const agent = agentById.get(id);
+      return `<article class="agent-node"><b>${esc(agent.name || id)}</b>${badge(agent.status || "idle")}<p>${esc(agent.current_work || agent.role || "")}</p></article>`;
+    }).join("");
+    return `<section class="agent-stage"><div class="stage-label">${esc(stage.label)}</div>${nodes || `<article class="agent-node"><b>No agents</b></article>`}</section>`;
+  }).join("");
+}
+
+async function openDoc(path) {
+  const modal = document.getElementById("docModal");
+  const title = document.getElementById("docModalTitle");
+  const body = document.getElementById("docModalBody");
+  title.textContent = path;
+  body.textContent = `Loading ${path}...`;
+  modal.hidden = false;
+  const url = new URL(`../${path}`, window.location.href);
+  url.searchParams.set("ts", Date.now());
+  try {
+    const response = await fetch(url.href, { cache: "no-store" });
+    if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
+    body.textContent = await response.text();
+  } catch (error) {
+    body.textContent = `${path}\n\nCould not load document: ${error.message}`;
+  }
+}
+
+function render(state) {
+  const project = state.project || {};
+  const decisions = state.decisions || [];
+  const waitingIds = new Set();
+  (state.approval_queue || []).forEach((item) => waitingIds.add(item.id || item.question || JSON.stringify(item)));
+  decisions
+    .filter((decision) => ["waiting_user", "pending", "needs_decision"].includes(normalize(decision.status)))
+    .forEach((decision) => waitingIds.add(decision.id || decision.question || JSON.stringify(decision)));
+  const waitingDecisions = waitingIds.size;
+  document.getElementById("projectName").textContent = project.name || "Untitled project";
+  document.getElementById("projectPurpose").textContent = project.purpose || state.factory?.summary || "No project purpose recorded.";
+  document.getElementById("decisionMetric").textContent = waitingDecisions;
+  document.getElementById("reportMetric").textContent = (state.council_reports || []).length;
+  document.getElementById("optionMetric").textContent = (state.option_matrix || []).length;
+  document.getElementById("phaseBadge").outerHTML = badge(project.current_phase || "idle").replace("<span", '<span id="phaseBadge"');
+  document.getElementById("updatedAt").textContent = state.factory?.updated_at || "no update time";
+  document.getElementById("stateSource").textContent = `State source: ${state.__source || "unknown"}`;
+  renderApprovalQueue(state);
+  renderDirectionLock(state);
+  renderDiscovery(state);
+  renderOptions(state);
+  renderTasks(state);
+  renderSidePanels(state);
+  renderTimeline(state);
+  renderAgentMap(state);
+}
+
+document.addEventListener("click", (event) => {
+  const docTarget = event.target.closest("[data-doc]");
+  if (docTarget) openDoc(docTarget.dataset.doc);
+  if (event.target.closest("[data-close-doc]") || event.target.id === "docModal") {
+    document.getElementById("docModal").hidden = true;
+  }
+});
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") document.getElementById("docModal").hidden = true;
+});
+
+loadState().then(render);
+</script>
+</body>
+</html>

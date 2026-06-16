@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "product_intent": {
+    "user_job": "",
+    "target_user": "",
+    "non_negotiable_outcomes": [],
+    "done_means": "Observable behavior in the real app, not only files, screenshots, or monitor state."
+  },
+  "requirements": [
+    {
+      "id": "REQ-001",
+      "user_story": "As a <user>, I want <capability>, so that <outcome>.",
+      "acceptance_criteria": [
+        "WHEN <trigger or condition> THE SYSTEM SHALL <observable behavior>."
+      ],
+      "priority": "must"
+    }
+  ],
+  "primary_scenarios": [
+    {
+      "id": "SCN-001",
+      "requirement_ids": ["REQ-001"],
+      "given": "",
+      "when": "",
+      "then": "",
+      "evidence": "",
+      "status": "pending"
+    }
+  ],
+  "design_invariants": {
+    "first_screen_zones": [],
+    "primary_actions": [],
+    "component_inventory": [],
+    "state_inventory": ["empty", "selected", "success", "error"],
+    "responsive_rules": [],
+    "visual_tokens": {},
+    "do_not_degrade": []
+  },
+  "data_breadth": {
+    "minimum_items": 0,
+    "minimum_examples": 0,
+    "rationale": ""
+  },
+  "verification": {
+    "real_entrypoint": "",
+    "commands": [],
+    "browser_checks": [],
+    "required_artifacts": [],
+    "security_checks": [],
+    "scope_checks": []
+  },
+  "completion_status": {
+    "scenario_status": "pending",
+    "design_parity_status": "pending",
+    "qa_evidence_status": "pending",
+    "scope_status": "pending",
+    "overall": "pending",
+    "remaining_risks": []
+  }
+}
