@@ -57,6 +57,10 @@ USER_FACING_HINTS = (
     "interactive",
     "user-facing",
 )
+APP_DIRS = {"app", "src", "components", "pages", "views", "routes"}
+APP_SUFFIXES = {".html", ".htm", ".jsx", ".tsx", ".vue", ".svelte"}
+IGNORED_APP_SCAN_DIRS = {".git", ".factory", "node_modules", "__pycache__", ".next", "dist", "build"}
+APPROVED_LOCK_STATUSES = {"approved", "locked", "skipped_by_user"}
 
 
 class Finding:
@@ -132,6 +136,30 @@ def resolve_project_path(project_root: Path, path_text: str) -> Path:
     if not candidate.is_absolute():
         candidate = project_root / candidate
     return candidate
+
+
+def is_ignored_app_scan_path(path: Path, root: Path) -> bool:
+    try:
+        parts = path.relative_to(root).parts
+    except ValueError:
+        return True
+    return any(part in IGNORED_APP_SCAN_DIRS for part in parts)
+
+
+def discover_app_files(project_root: Path) -> list[str]:
+    hits: list[str] = []
+    for path in project_root.rglob("*"):
+        if not path.is_file() or is_ignored_app_scan_path(path, project_root):
+            continue
+        rel = path.relative_to(project_root)
+        parts = rel.parts
+        if not parts:
+            continue
+        under_app_dir = parts[0] in APP_DIRS
+        root_entry = len(parts) == 1 and path.name.lower() in {"index.html", "main.jsx", "main.tsx", "app.jsx", "app.tsx"}
+        if (under_app_dir or root_entry) and path.suffix.lower() in APP_SUFFIXES:
+            hits.append(rel.as_posix())
+    return sorted(hits)
 
 
 def task_is_user_facing(task: dict[str, Any]) -> bool:
@@ -257,6 +285,21 @@ def check_direction_lock(project_root: Path, state: dict[str, Any], collector: C
         alerts = as_list(state.get("operator_alerts"))
         if not alerts:
             collector.warn("direction-lock-skipped-no-alert", "discovery was skipped but operator_alerts is empty")
+
+
+def check_app_files_before_direction_lock(project_root: Path, state: dict[str, Any], collector: Collector) -> None:
+    direction_lock = state.get("direction_lock")
+    status = ""
+    if isinstance(direction_lock, dict):
+        status = str(direction_lock.get("status", "")).strip().lower()
+    if status in APPROVED_LOCK_STATUSES:
+        return
+    app_files = discover_app_files(project_root)
+    if app_files:
+        collector.fail(
+            "app-files-before-direction-lock",
+            "app/product files exist before Direction Lock approval: " + ", ".join(app_files[:12]),
+        )
 
 
 def check_acceptance_contract(project_root: Path, collector: Collector) -> dict[str, Any] | None:
@@ -408,6 +451,7 @@ def check_state(project_root: Path, state_path: Path, collector: Collector) -> d
 
     check_required_docs(project_root, state, collector)
     check_direction_lock(project_root, state, collector)
+    check_app_files_before_direction_lock(project_root, state, collector)
     check_task_contracts(project_root, tasks, collector)
     check_artifacts(project_root, state, collector)
     return state

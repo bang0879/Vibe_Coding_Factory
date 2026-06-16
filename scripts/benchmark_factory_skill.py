@@ -68,6 +68,9 @@ DIMENSIONS = [
             ("scripts/verify_factory_run.py", "def check_direction_lock"),
             ("scripts/verify_factory_run.py", "check_acceptance_contract"),
             ("scripts/verify_factory_run.py", "check_dashboard"),
+            ("scripts/verify_factory_run.py", "app-files-before-direction-lock"),
+            ("scripts/factory_preflight.py", "missing-factory-state"),
+            ("scripts/factory_preflight.py", "direction-lock-not-approved"),
             ("scripts/validate_factory_schema.py", "BAD_TEXT_MARKERS"),
             ("scripts/benchmark_factory_skill.py", "benchmark_type"),
         ],
@@ -89,6 +92,8 @@ DIMENSIONS = [
         "checks": [
             ("references/product-quality.md", "Product Quality Gates"),
             ("references/completion-harness.md", "Scenario Harness"),
+            ("references/cold-start-side-projects.md", "lightweight cold-start side projects"),
+            ("references/cold-start-side-projects.md", "Completion Standard"),
             ("SKILL.md", "Consumer Appeal Reviewer"),
             ("SKILL.md", "input-driven"),
             ("templates/qa-evidence.md", "Evidence"),
@@ -109,6 +114,8 @@ DIMENSIONS = [
         "weight": 6,
         "checks": [
             ("SKILL.md", "description: Use when"),
+            ("SKILL.md", "Preflight Stop Rule"),
+            ("README.md", "lightweight cold-start side projects"),
             ("agents/openai.yaml", "display_name"),
             ("agents/openai.yaml", "default_prompt"),
             ("references/benchmark-rubric.md", "Self-Audit Rubric"),
@@ -120,6 +127,8 @@ DIMENSIONS = [
         "checks": [
             ("references/project-management.md", "worktree"),
             ("references/external-patterns.md", "GitHub"),
+            ("references/runtime-portability.md", "Claude Code"),
+            ("AGENTS.md", "factory_preflight.py"),
             ("references/benchmark-rubric.md", "External Evaluation Plan"),
             ("references/benchmark-rubric.md", "No Peer Ranking"),
             ("scripts/benchmark_factory_skill.py", "limitations"),

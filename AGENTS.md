@@ -1,6 +1,6 @@
 # Vibe Coding Factory Agent Guide
 
-Use this repository as a runtime-neutral workflow for approval-gated app building.
+Use this repository as a runtime-neutral workflow for approval-gated app building, especially lightweight cold-start side projects from rough one-line ideas.
 
 ## Core Contract
 
@@ -16,9 +16,16 @@ Use this repository as a runtime-neutral workflow for approval-gated app buildin
 python scripts/verify_factory_run.py --project-root . --mode all
 ```
 
+Before writing app/product files, run:
+
+```bash
+python scripts/factory_preflight.py --project-root .
+```
+
 ## Boundaries
 
 - Do not turn a vague idea into app code without Direction Lock.
+- Do not skip preflight before implementation.
 - Do not treat dashboard HTML as a working app.
 - Do not claim benchmark superiority from `scripts/benchmark_factory_skill.py`; it is a local self-audit only.
 - If your runtime has no sub-agents, run each role serially and write separate council reports.
@@ -30,4 +37,3 @@ python scripts/verify_factory_run.py --project-root . --mode all
 - `references/benchmark-rubric.md`: local self-audit rubric.
 - `templates/factory-state.json`: monitor/state schema.
 - `scripts/verify_factory_run.py`: completion verifier.
-

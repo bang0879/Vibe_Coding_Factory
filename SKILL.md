@@ -1,6 +1,6 @@
 ---
 name: vibe-coding-factory
-description: Use when the user asks an AI coding agent to build production-oriented apps or features through a vibe-coding factory, delegated or parallel workflow, project-flow monitor, Discovery Council, Direction Lock, PRD, GTM, design brief, task decomposition, executable acceptance harness, QA/UX/scope/consumer appeal review, revision loop, or visual progress dashboard.
+description: Use when the user gives a rough or one-line side-project app idea, asks for a lightweight cold-start build, wants an AI coding agent not to choose product direction silently, or needs approval-gated planning and verification before app implementation.
 ---
 
 # Vibe Coding Factory
@@ -8,6 +8,26 @@ description: Use when the user asks an AI coding agent to build production-orien
 Use this skill to operate a runtime-neutral agent factory. The current agent runtime acts as the orchestrator. In a Codex host, Codex may spawn sub-agents only when the user explicitly asks for agent/team/delegated/parallel work or when this skill is invoked for factory execution.
 
 Do not use an external app as the source of truth. Keep the workflow state in the current project files so the same method can be adapted to Codex, Claude Code, or another coding-agent host. The dashboard is a monitor only.
+
+## Purpose Fit
+
+Optimize for lightweight cold-start side projects: casual one-line ideas, low-domain-risk apps, Korean-first solo workflows, and small products where the main danger is an agent silently choosing the wrong direction or shipping a pretty mockup that does not work.
+
+Keep the council concise for lightweight cold-start work. Each role can report in 1-3 high-signal bullets, but the gate cannot be skipped unless the user explicitly says to skip discovery.
+
+For heavyweight regulated domains, existing large codebases, enterprise SDLC, or deep domain research, treat this skill as a control layer only and add domain-specific skills, tests, and expert review.
+
+## Preflight Stop Rule
+
+First action for any app build request: stop before writing app/product code. Create or update `.factory/factory-state.json` and `.factory/factory-log.md`, record the Idea Snapshot, and run Discovery Council unless the user explicitly skips discovery.
+
+Before creating or editing app/product files, run:
+
+```bash
+python "<skill-root>/scripts/factory_preflight.py" --project-root .
+```
+
+If `factory_preflight.py` fails, do not implement. Report the blocker, update `operator_alerts[]`, and continue only with discovery, Direction Lock, or explicit user skip handling. App/product code written before Direction Lock is a workflow violation and must be treated as stale or reverted only with user approval.
 
 ## Core Flow
 
@@ -88,11 +108,14 @@ Load only what is needed:
 - For executable product contracts, deterministic completion checks, and fresh-review gates, read `references/factory-harness.md` before implementation and before final completion.
 - For runtime portability across Codex, Claude Code, and generic coding agents, read `references/runtime-portability.md`.
 - For local self-audit scoring, read `references/benchmark-rubric.md` and run `scripts/benchmark_factory_skill.py`.
+- For lightweight cold-start side-project fit, read `references/cold-start-side-projects.md`.
 
 ## Operating Rules
 
 - The user-facing language is Korean unless the user requests otherwise.
 - Agent-to-agent reports use Caveman format.
+- This skill's default niche is lightweight cold-start side projects, not heavyweight enterprise SDLC replacement.
+- `factory_preflight.py` must pass before app/product implementation starts.
 - The first user idea is not a build spec. Treat it as discovery input until Direction Lock is approved.
 - Enforce implementation freeze before Direction Lock: no implementation tasks, no Engineer code, and no final PRD/GTM/design handoff may proceed unless the user explicitly skips discovery.
 - If discovery is skipped by the user, set `direction_lock.status` to `skipped_by_user`, record the risk in `operator_alerts[]`, and continue with the user's selected scope.

@@ -1,7 +1,7 @@
 interface:
   display_name: "Vibe Coding Factory"
-  short_description: "Plan, monitor, and gate agent-team app builds before code."
-  default_prompt: "Use $vibe-coding-factory to turn my rough app idea into a monitored, approval-gated build plan."
+  short_description: "Gate lightweight cold-start side projects before code."
+  default_prompt: "Use $vibe-coding-factory to turn my rough side-project idea into a monitored Direction Lock before any app code."
 
 policy:
   allow_implicit_invocation: true

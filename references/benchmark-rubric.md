@@ -2,6 +2,8 @@
 
 Use this rubric to check whether this repository contains the workflow controls it claims to provide. It is not an external benchmark, not a SWE-bench score, and not a claim that Vibe Coding Factory outperforms named tools.
 
+The intended comparison frame is lightweight cold-start side projects, not enterprise SDLC platforms. A strong score means the local repository has the guardrails needed for rough personal app ideas: direction control, preflight blocking, monitor state, and fake-completion checks.
+
 ## No Peer Ranking
 
 Do not hand-write scores for other projects. Do not print a rank against public tools unless those repositories were evaluated by the same published harness, on the same revision, with reproducible inputs.
@@ -47,10 +49,11 @@ Total score: 100.
 To turn this into a real benchmark, add all of the following:
 
 1. A scenario suite with rough ideas, skip-discovery requests, revision requests, and fake-completion traps.
-2. A reproducible runner that evaluates multiple agent runtimes with the same prompts and project fixtures.
-3. Objective scoring for Direction Lock compliance, artifact quality, monitor freshness, harness failures caught, and rework avoided.
-4. CI that runs the fixtures on every change.
-5. Case studies comparing the same project with and without the factory workflow.
+2. Lightweight cold-start fixtures such as recommendation apps, trip briefings, local dashboards, and mockup-only traps.
+3. A reproducible runner that evaluates multiple agent runtimes with the same prompts and project fixtures.
+4. Objective scoring for Direction Lock compliance, artifact quality, monitor freshness, harness failures caught, and rework avoided.
+5. CI that runs the fixtures on every change.
+6. Case studies comparing the same project with and without the factory workflow.
 
 Run the local self-audit after major workflow, monitor, state schema, or verification changes:
 

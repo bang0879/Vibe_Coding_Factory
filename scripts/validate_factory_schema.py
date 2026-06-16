@@ -62,6 +62,7 @@ REQUIRED_FILES = [
     "references/discovery-council.md",
     "references/reporting-sync.md",
     "references/runtime-portability.md",
+    "references/cold-start-side-projects.md",
     "references/benchmark-rubric.md",
     "templates/decision-brief.md",
     "templates/direction-lock.md",
@@ -70,7 +71,9 @@ REQUIRED_FILES = [
     "templates/risk-register.md",
     "scripts/update_factory_state.py",
     "scripts/benchmark_factory_skill.py",
+    "scripts/factory_preflight.py",
     "tests/test_benchmark_integrity.py",
+    "tests/test_preflight_guard.py",
     "tests/test_runtime_portability.py",
 ]
 
@@ -174,6 +177,9 @@ def check_text(skill_root: Path, findings: list[str]) -> None:
         fail(findings, "SKILL.md must not claim a Codex-only runtime")
     if "runtime-neutral" not in skill_text:
         fail(findings, "SKILL.md must describe the workflow as runtime-neutral")
+    for required in ["Preflight Stop Rule", "factory_preflight.py", "lightweight cold-start"]:
+        if required not in skill_text:
+            fail(findings, f"missing-skill-preflight-text: {required}")
     for required in REQUIRED_SKILL_TEXT:
         if required not in skill_text:
             fail(findings, f"missing-skill-text: {required}")
@@ -201,9 +207,19 @@ def check_text(skill_root: Path, findings: list[str]) -> None:
             fail(findings, f"missing-benchmark-script-text: {required}")
 
     portability = (skill_root / "references" / "runtime-portability.md").read_text(encoding="utf-8")
-    for required in ["Codex", "Claude Code", "Generic agents", "Portable Invariants"]:
+    for required in ["Codex", "Claude Code", "Generic agents", "Portable Invariants", "factory_preflight.py"]:
         if required not in portability:
             fail(findings, f"missing-portability-text: {required}")
+
+    cold_start = (skill_root / "references" / "cold-start-side-projects.md").read_text(encoding="utf-8")
+    for required in ["lightweight cold-start side projects", "Lightweight Council", "Completion Standard"]:
+        if required not in cold_start:
+            fail(findings, f"missing-cold-start-text: {required}")
+
+    preflight = (skill_root / "scripts" / "factory_preflight.py").read_text(encoding="utf-8")
+    for required in ["missing-factory-state", "direction-lock-not-approved", "app-files-before-direction-lock"]:
+        if required not in preflight:
+            fail(findings, f"missing-preflight-script-text: {required}")
 
     dashboard = (skill_root / "templates" / "factory-dashboard.html").read_text(encoding="utf-8")
     for required in REQUIRED_DASHBOARD_TEXT:

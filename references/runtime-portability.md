@@ -2,6 +2,8 @@
 
 Vibe Coding Factory is a workflow contract, not a dependency on one agent host.
 
+The default product niche is lightweight cold-start side projects: rough one-line ideas, casual solo workflows, and small apps where the main risks are premature direction choice and non-working mockups.
+
 ## Portable Invariants
 
 Keep these rules the same across runtimes:
@@ -12,6 +14,7 @@ Keep these rules the same across runtimes:
 - Run Discovery Council before Direction Lock when discovery is not skipped.
 - Record user decisions, report sync, handoffs, artifacts, and task gates in machine-readable state.
 - Run `scripts/verify_factory_run.py` before claiming a user-facing app or factory run is complete.
+- Run `scripts/factory_preflight.py` before creating or editing app/product files.
 
 ## Runtime Adapters
 
@@ -38,4 +41,3 @@ If a host has its own testing or completion skill, require both that host's chec
 - [ ] Scripts use the Python standard library unless a file documents otherwise.
 - [ ] Completion claims depend on deterministic checks, not host UI state.
 - [ ] Adapter docs name host-specific behavior as an adapter concern, not a core workflow rule.
-

@@ -1,6 +1,6 @@
 # Vibe Coding Factory
 
-Vibe Coding Factory is a runtime-neutral workflow for turning rough app ideas into monitored, approval-gated build plans before implementation starts. It ships as a Codex skill, with portable entrypoints for other coding-agent hosts.
+Vibe Coding Factory is a runtime-neutral workflow for turning rough app ideas into monitored, approval-gated build plans before implementation starts. It is tuned for lightweight cold-start side projects: the casual one-line ideas where AI agents often pick the wrong direction or ship a mockup that does not actually work.
 
 It is designed for builders who want the speed of vibe coding without letting an agent silently choose the product direction, scope, stack, or business assumptions on its own.
 
@@ -13,10 +13,13 @@ It is designed for builders who want the speed of vibe coding without letting an
 - Keeps a visual Factory Monitor in sync with state, decisions, handoffs, tasks, and gates.
 - Uses deterministic scripts to catch fake completion, stale monitor state, missing approvals, and incomplete factory runs.
 - Adds product-quality gates for real apps: input-driven behavior, UX review, consumer appeal, scope audit, browser evidence, and acceptance contracts.
+- Blocks app implementation with `scripts/factory_preflight.py` until factory state and Direction Lock are ready.
 
 ## Why This Exists
 
 Most AI coding failures do not begin in the code. They begin when a vague idea is converted into an unapproved product direction.
+
+For small side projects, that failure is especially expensive: a lunch picker, trip briefing, or local dashboard can look finished while doing almost nothing. This workflow is built to catch that early.
 
 This skill makes the agent stop at the right moments:
 
@@ -50,6 +53,10 @@ The core workflow does not depend on Codex-specific APIs. Codex is the primary p
 - Generic coding agents: use `AGENTS.md` and the scripts/templates directly.
 
 The portable invariants are documented in `references/runtime-portability.md`.
+
+## Best Fit
+
+Use this for lightweight cold-start side projects, especially Korean-first solo workflows. It is not trying to replace heavyweight SDLC frameworks. For regulated, enterprise, or deeply domain-specific products, use it as a control layer and add domain-specific review.
 
 ## Repository Layout
 
@@ -85,6 +92,12 @@ python scripts/benchmark_factory_skill.py --skill-root .
 ```
 
 The self-audit checks this repository's own workflow artifacts. It is not a peer benchmark, runtime SWE-bench score, adoption claim, or proof that this project outperforms named tools.
+
+Run the implementation preflight before app/product code starts:
+
+```bash
+python scripts/factory_preflight.py --project-root .
+```
 
 ## Factory Run Verification
 
