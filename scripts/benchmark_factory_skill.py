@@ -61,6 +61,8 @@ DIMENSIONS = [
             ("templates/factory-dashboard.html", 'data-panel="direction-lock"'),
             ("templates/factory-dashboard.html", "renderCouncilReports"),
             ("references/factory-monitor.md", "Stale Monitor Guard"),
+            ("scripts/ensure_factory_monitor.py", "monitor-meta.json"),
+            ("scripts/ensure_factory_monitor.py", "webbrowser.open"),
         ],
     },
     {
@@ -72,6 +74,7 @@ DIMENSIONS = [
             ("scripts/verify_factory_run.py", "check_dashboard"),
             ("scripts/verify_factory_run.py", "app-files-before-direction-lock"),
             ("scripts/verify_factory_run.py", "user-wait-monitor-missing"),
+            ("scripts/verify_factory_run.py", "user-wait-monitor-path-missing"),
             ("scripts/factory_preflight.py", "missing-factory-state"),
             ("scripts/factory_preflight.py", "direction-lock-not-approved"),
             ("scripts/validate_factory_schema.py", "BAD_TEXT_MARKERS"),

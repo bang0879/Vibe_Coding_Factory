@@ -33,6 +33,12 @@ If `factory_preflight.py` fails, do not implement. Report the blocker, update `o
 
 Whenever the next step needs the user's answer, approval, or selection, update the monitor first, then open or surface the monitor before asking. If the host cannot open a browser panel, show the monitor path or URL in the reply.
 
+Before every user-wait prompt, run:
+
+```bash
+python "<skill-root>/scripts/ensure_factory_monitor.py" --project-root . --open
+```
+
 Every user-wait report must include:
 
 - `Decision summary`: the question, recommended option, options, and consequence.
@@ -41,6 +47,8 @@ Every user-wait report must include:
 - `Next automatic work`: what can proceed without user input.
 
 Set `report_sync.last_prompt_requires_user` to `true`, fill `latest_decision_summary`, `user_waiting_summary`, `monitor_view`, and `monitor_opened_at`, then ask the user. Do not ask for a decision with only chat text.
+
+Do not ask the user to decide from chat alone. If monitor opening fails, say that the monitor open failed and provide the exact `Monitor view` path or URL.
 
 ## Core Flow
 

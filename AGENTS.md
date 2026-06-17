@@ -22,6 +22,12 @@ Before writing app/product files, run:
 python scripts/factory_preflight.py --project-root .
 ```
 
+Before asking the user to approve, choose, answer, or revise, run:
+
+```bash
+python scripts/ensure_factory_monitor.py --project-root . --open
+```
+
 ## Boundaries
 
 - Do not turn a vague idea into app code without Direction Lock.

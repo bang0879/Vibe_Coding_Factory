@@ -19,6 +19,12 @@ Before sending any progress, decision, blocker, or completion report:
 
 Whenever the report asks the user to answer, approve, pick an option, revise a direction, or continue/stop work, open or surface the monitor before asking. If the runtime cannot open a browser, show the monitor path or URL.
 
+Preferred helper:
+
+```bash
+python "<skill-root>/scripts/ensure_factory_monitor.py" --project-root . --open
+```
+
 `report_sync` shape:
 
 ```json

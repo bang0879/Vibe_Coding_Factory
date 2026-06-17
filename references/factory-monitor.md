@@ -22,6 +22,12 @@ Use this structure in the active project:
   events/
 ```
 
+Refresh and surface the monitor with:
+
+```bash
+python "<skill-root>/scripts/ensure_factory_monitor.py" --project-root . --open
+```
+
 ## Stale Monitor Guard
 
 Before opening or reporting a monitor URL, verify that the served dashboard belongs to the active project and matches the current template.

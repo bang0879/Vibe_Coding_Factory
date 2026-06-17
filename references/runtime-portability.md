@@ -16,6 +16,7 @@ Keep these rules the same across runtimes:
 - Run `scripts/verify_factory_run.py` before claiming a user-facing app or factory run is complete.
 - Run `scripts/factory_preflight.py` before creating or editing app/product files.
 - Surface the monitor path or URL whenever the host asks the user to approve, choose, answer, or revise.
+- Prefer `scripts/ensure_factory_monitor.py --project-root . --open` before every user-wait prompt.
 
 ## Runtime Adapters
 

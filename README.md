@@ -100,6 +100,12 @@ Run the implementation preflight before app/product code starts:
 python scripts/factory_preflight.py --project-root .
 ```
 
+Refresh and open/surface the monitor before asking the user to decide:
+
+```bash
+python scripts/ensure_factory_monitor.py --project-root . --open
+```
+
 ## Factory Run Verification
 
 Inside a project that used the skill:

@@ -15,6 +15,7 @@ import os
 import re
 import sys
 import urllib.request
+from urllib.parse import urlparse
 from pathlib import Path
 from typing import Any
 
@@ -302,7 +303,22 @@ def check_app_files_before_direction_lock(project_root: Path, state: dict[str, A
         )
 
 
-def check_user_wait_monitor_report(state: dict[str, Any], collector: Collector) -> None:
+def monitor_view_exists(project_root: Path, value: Any) -> bool:
+    if value in ("", None, []):
+        return False
+    text = str(value)
+    parsed = urlparse(text)
+    if parsed.scheme in {"http", "https"}:
+        return True
+    if parsed.scheme == "file":
+        return Path(parsed.path).exists()
+    path = Path(text)
+    if not path.is_absolute():
+        path = project_root / path
+    return path.exists()
+
+
+def check_user_wait_monitor_report(project_root: Path, state: dict[str, Any], collector: Collector) -> None:
     approval_queue = [
         item for item in as_list(state.get("approval_queue"))
         if isinstance(item, dict) and str(item.get("status", "")).lower() in {"waiting_user", "pending"}
@@ -323,6 +339,10 @@ def check_user_wait_monitor_report(state: dict[str, Any], collector: Collector) 
     for key, value in required_fields.items():
         if value in ("", None, []):
             collector.fail("user-wait-monitor-missing", f"user wait report_sync.{key} is empty")
+
+    monitor_value = required_fields["monitor_view"]
+    if monitor_value not in ("", None, []) and not monitor_view_exists(project_root, monitor_value):
+        collector.fail("user-wait-monitor-path-missing", f"user wait monitor view does not exist: {monitor_value}")
 
     monitor_status = str(report_sync.get("monitor_status", "")).lower()
     if monitor_status not in {"current", "state_only"}:
@@ -479,7 +499,7 @@ def check_state(project_root: Path, state_path: Path, collector: Collector) -> d
     check_required_docs(project_root, state, collector)
     check_direction_lock(project_root, state, collector)
     check_app_files_before_direction_lock(project_root, state, collector)
-    check_user_wait_monitor_report(state, collector)
+    check_user_wait_monitor_report(project_root, state, collector)
     check_task_contracts(project_root, tasks, collector)
     check_artifacts(project_root, state, collector)
     return state

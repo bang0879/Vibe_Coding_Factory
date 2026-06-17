@@ -71,9 +71,11 @@ REQUIRED_FILES = [
     "templates/risk-register.md",
     "scripts/update_factory_state.py",
     "scripts/benchmark_factory_skill.py",
+    "scripts/ensure_factory_monitor.py",
     "scripts/factory_preflight.py",
     "tests/test_benchmark_integrity.py",
     "tests/test_decision_monitor_reporting.py",
+    "tests/test_monitor_opening.py",
     "tests/test_preflight_guard.py",
     "tests/test_runtime_portability.py",
 ]
@@ -188,7 +190,7 @@ def check_text(skill_root: Path, findings: list[str]) -> None:
         fail(findings, "SKILL.md must not claim a Codex-only runtime")
     if "runtime-neutral" not in skill_text:
         fail(findings, "SKILL.md must describe the workflow as runtime-neutral")
-    for required in ["Preflight Stop Rule", "factory_preflight.py", "lightweight cold-start", "User-Wait Monitor Rule"]:
+    for required in ["Preflight Stop Rule", "factory_preflight.py", "lightweight cold-start", "User-Wait Monitor Rule", "ensure_factory_monitor.py"]:
         if required not in skill_text:
             fail(findings, f"missing-skill-preflight-text: {required}")
     for required in REQUIRED_SKILL_TEXT:
@@ -241,6 +243,11 @@ def check_text(skill_root: Path, findings: list[str]) -> None:
     for required in ["last_prompt_requires_user", "latest_decision_summary", "user_waiting_summary", "monitor_opened_at"]:
         if required not in updater:
             fail(findings, f"missing-updater-user-wait-text: {required}")
+
+    ensure_monitor = (skill_root / "scripts" / "ensure_factory_monitor.py").read_text(encoding="utf-8")
+    for required in ["factory-dashboard.html", "monitor-meta.json", "monitor-url.txt", "webbrowser.open"]:
+        if required not in ensure_monitor:
+            fail(findings, f"missing-ensure-monitor-text: {required}")
 
     dashboard = (skill_root / "templates" / "factory-dashboard.html").read_text(encoding="utf-8")
     for required in REQUIRED_DASHBOARD_TEXT:
