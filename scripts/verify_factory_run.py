@@ -302,6 +302,33 @@ def check_app_files_before_direction_lock(project_root: Path, state: dict[str, A
         )
 
 
+def check_user_wait_monitor_report(state: dict[str, Any], collector: Collector) -> None:
+    approval_queue = [
+        item for item in as_list(state.get("approval_queue"))
+        if isinstance(item, dict) and str(item.get("status", "")).lower() in {"waiting_user", "pending"}
+    ]
+    report_sync = state.get("report_sync")
+    if not approval_queue and not (isinstance(report_sync, dict) and report_sync.get("last_prompt_requires_user")):
+        return
+    if not isinstance(report_sync, dict):
+        collector.fail("user-wait-monitor-missing", "user decision is waiting but report_sync is missing")
+        return
+
+    required_fields = {
+        "latest_decision_id": report_sync.get("latest_decision_id"),
+        "latest_decision_summary": report_sync.get("latest_decision_summary"),
+        "user_waiting_summary": report_sync.get("user_waiting_summary"),
+        "monitor_view": report_sync.get("monitor_view") or report_sync.get("monitor_url"),
+    }
+    for key, value in required_fields.items():
+        if value in ("", None, []):
+            collector.fail("user-wait-monitor-missing", f"user wait report_sync.{key} is empty")
+
+    monitor_status = str(report_sync.get("monitor_status", "")).lower()
+    if monitor_status not in {"current", "state_only"}:
+        collector.fail("user-wait-monitor-stale", f"user wait monitor_status must be current or state_only; got {monitor_status or 'empty'}")
+
+
 def check_acceptance_contract(project_root: Path, collector: Collector) -> dict[str, Any] | None:
     contract_path = project_root / "docs" / "ACCEPTANCE_CONTRACT.json"
     if not contract_path.exists():
@@ -452,6 +479,7 @@ def check_state(project_root: Path, state_path: Path, collector: Collector) -> d
     check_required_docs(project_root, state, collector)
     check_direction_lock(project_root, state, collector)
     check_app_files_before_direction_lock(project_root, state, collector)
+    check_user_wait_monitor_report(state, collector)
     check_task_contracts(project_root, tasks, collector)
     check_artifacts(project_root, state, collector)
     return state

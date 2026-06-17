@@ -14,6 +14,7 @@ It is designed for builders who want the speed of vibe coding without letting an
 - Uses deterministic scripts to catch fake completion, stale monitor state, missing approvals, and incomplete factory runs.
 - Adds product-quality gates for real apps: input-driven behavior, UX review, consumer appeal, scope audit, browser evidence, and acceptance contracts.
 - Blocks app implementation with `scripts/factory_preflight.py` until factory state and Direction Lock are ready.
+- Surfaces the monitor and decision summary whenever the workflow waits for the user's approval or selection.
 
 ## Why This Exists
 

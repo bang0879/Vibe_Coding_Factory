@@ -26,6 +26,7 @@ python scripts/factory_preflight.py --project-root .
 
 - Do not turn a vague idea into app code without Direction Lock.
 - Do not skip preflight before implementation.
+- Do not ask the user for approval or selection without surfacing `Monitor view` and a short decision summary.
 - Do not treat dashboard HTML as a working app.
 - Do not claim benchmark superiority from `scripts/benchmark_factory_skill.py`; it is a local self-audit only.
 - If your runtime has no sub-agents, run each role serially and write separate council reports.

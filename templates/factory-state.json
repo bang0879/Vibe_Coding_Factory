@@ -1,7 +1,7 @@
 {
   "factory": {
     "name": "vibe-coding-factory",
-    "mode": "codex-only",
+    "mode": "runtime-neutral",
     "schema_version": 2,
     "updated_at": "",
     "summary": "Factory is ready. It updates only when Codex runs the vibe-coding-factory skill."
@@ -208,10 +208,15 @@
     "last_state_update_at": "",
     "last_report_at": "",
     "last_report_summary": "",
+    "last_prompt_requires_user": false,
     "latest_event_id": "evt-ready",
     "latest_decision_id": "",
+    "latest_decision_summary": "",
+    "user_waiting_summary": "",
     "monitor_status": "state_only",
     "monitor_url": "",
+    "monitor_view": ".factory/factory-dashboard.html",
+    "monitor_opened_at": "",
     "state_path": ".factory/factory-state.json",
     "failed_update_reason": ""
   },

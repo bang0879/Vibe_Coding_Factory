@@ -15,6 +15,7 @@ Keep these rules the same across runtimes:
 - Record user decisions, report sync, handoffs, artifacts, and task gates in machine-readable state.
 - Run `scripts/verify_factory_run.py` before claiming a user-facing app or factory run is complete.
 - Run `scripts/factory_preflight.py` before creating or editing app/product files.
+- Surface the monitor path or URL whenever the host asks the user to approve, choose, answer, or revise.
 
 ## Runtime Adapters
 

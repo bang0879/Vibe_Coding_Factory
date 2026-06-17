@@ -15,6 +15,10 @@ Before sending any progress, decision, blocker, or completion report:
 3. Update `report_sync`.
 4. Mention the monitor status in the report.
 
+## User-Wait Monitor Rule
+
+Whenever the report asks the user to answer, approve, pick an option, revise a direction, or continue/stop work, open or surface the monitor before asking. If the runtime cannot open a browser, show the monitor path or URL.
+
 `report_sync` shape:
 
 ```json
@@ -23,10 +27,15 @@ Before sending any progress, decision, blocker, or completion report:
   "last_state_update_at": "",
   "last_report_at": "",
   "last_report_summary": "",
+  "last_prompt_requires_user": false,
   "latest_event_id": "",
   "latest_decision_id": "",
+  "latest_decision_summary": "",
+  "user_waiting_summary": "",
   "monitor_status": "current",
   "monitor_url": "",
+  "monitor_view": ".factory/factory-dashboard.html",
+  "monitor_opened_at": "",
   "state_path": ".factory/factory-state.json",
   "failed_update_reason": ""
 }
@@ -67,9 +76,13 @@ Decision needed: <one-line decision>
 Recommended: <option>
 Reason: <one short reason>
 Options: A / B / C
+Decision summary: <question, recommended option, options, and consequence>
 Monitor: <decision id, latest event id, monitor status>
+Monitor view: <served monitor URL or .factory/factory-dashboard.html>
 Proceeding automatically: <what will continue without user input>
 ```
+
+Before this report, `report_sync.last_prompt_requires_user` must be `true`, `latest_decision_summary` must summarize the choice, `user_waiting_summary` must match the user-facing request, and `monitor_view` must point to the dashboard.
 
 When no decision is needed, report:
 

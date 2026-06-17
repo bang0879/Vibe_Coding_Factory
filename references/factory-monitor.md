@@ -204,6 +204,7 @@ Create state from `templates/factory-state.json` and update it after:
 - Agent message or handoff.
 - Artifact creation, approval, revision, or stale mark.
 - User decision request, selection, or decision handoff.
+- Any user-wait report that asks the user to answer, approve, pick, or revise. The monitor must be opened or surfaced with the decision summary.
 - Engineer start or completion.
 - QA result.
 - UX result.
@@ -360,3 +361,15 @@ Do not over-log every private reasoning step. Log observable work states:
 - Task reopened.
 
 Use Korean for user-facing summaries and short English identifiers for machine-readable fields.
+
+## User-Wait Display
+
+When the factory waits for the user, the dashboard and the chat report should show the same decision:
+
+- Latest question.
+- Recommended option.
+- Option consequences.
+- Latest decision id and event id.
+- Whether the monitor is `current`, `state_only`, `stale`, or `unavailable`.
+
+If the monitor cannot be opened, report `.factory/factory-dashboard.html` or the served monitor URL as `Monitor view`.

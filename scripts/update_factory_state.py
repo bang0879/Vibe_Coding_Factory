@@ -61,18 +61,51 @@ def append_event(state: dict[str, Any], event_type: str, agent: str, message: st
     return event_id
 
 
-def sync_report(state: dict[str, Any], event_id: str, summary: str, monitor_status: str = "state_only", decision_id: str = "") -> None:
+def monitor_view(state: dict[str, Any]) -> str:
+    report_sync = state.get("report_sync", {}) if isinstance(state.get("report_sync"), dict) else {}
+    monitor_health = state.get("monitor_health", {}) if isinstance(state.get("monitor_health"), dict) else {}
+    return str(
+        report_sync.get("monitor_url")
+        or monitor_health.get("served_url")
+        or monitor_health.get("dashboard_path")
+        or ".factory/factory-dashboard.html"
+    )
+
+
+def sync_report(
+    state: dict[str, Any],
+    event_id: str,
+    summary: str,
+    monitor_status: str = "state_only",
+    decision_id: str = "",
+    requires_user: bool = False,
+    decision_summary: str = "",
+) -> None:
     report_sync = state.setdefault("report_sync", {})
+    view = monitor_view(state)
     report_sync.update(
         {
             "status": "synced",
             "last_state_update_at": now(),
             "last_report_summary": summary,
+            "last_prompt_requires_user": requires_user,
             "latest_event_id": event_id,
             "monitor_status": monitor_status,
+            "monitor_view": view,
             "failed_update_reason": "",
         }
     )
+    if requires_user:
+        report_sync["monitor_opened_at"] = now()
+        report_sync["latest_decision_summary"] = decision_summary or summary
+        report_sync["user_waiting_summary"] = (
+            f"Decision needed: {decision_summary or summary} | "
+            f"Monitor view: {view} | Event: {event_id}"
+        )
+    else:
+        report_sync.setdefault("monitor_opened_at", "")
+        report_sync.setdefault("latest_decision_summary", "")
+        report_sync.setdefault("user_waiting_summary", "")
     if decision_id:
         report_sync["latest_decision_id"] = decision_id
 
@@ -206,7 +239,16 @@ def cmd_decision(args: argparse.Namespace, state: dict[str, Any]) -> str:
             }
         )
     event_id = append_event(state, "decision_requested", "orchestrator", args.question, args.status)
-    sync_report(state, event_id, f"Decision recorded: {args.question}", args.monitor_status, decision_id)
+    decision_summary = f"{args.question} Recommended: {args.recommended}".strip()
+    sync_report(
+        state,
+        event_id,
+        f"Decision recorded: {args.question}",
+        args.monitor_status,
+        decision_id,
+        requires_user=args.status in {"waiting_user", "pending"},
+        decision_summary=decision_summary,
+    )
     return event_id
 
 

@@ -29,6 +29,19 @@ python "<skill-root>/scripts/factory_preflight.py" --project-root .
 
 If `factory_preflight.py` fails, do not implement. Report the blocker, update `operator_alerts[]`, and continue only with discovery, Direction Lock, or explicit user skip handling. App/product code written before Direction Lock is a workflow violation and must be treated as stale or reverted only with user approval.
 
+## User-Wait Monitor Rule
+
+Whenever the next step needs the user's answer, approval, or selection, update the monitor first, then open or surface the monitor before asking. If the host cannot open a browser panel, show the monitor path or URL in the reply.
+
+Every user-wait report must include:
+
+- `Decision summary`: the question, recommended option, options, and consequence.
+- `Monitor view`: `.factory/factory-dashboard.html` or the served monitor URL.
+- `State marker`: latest decision id, latest event id, and `report_sync.monitor_status`.
+- `Next automatic work`: what can proceed without user input.
+
+Set `report_sync.last_prompt_requires_user` to `true`, fill `latest_decision_summary`, `user_waiting_summary`, `monitor_view`, and `monitor_opened_at`, then ask the user. Do not ask for a decision with only chat text.
+
 ## Core Flow
 
 1. Capture the user's project idea, purpose, target user, and success criteria.
@@ -116,6 +129,7 @@ Load only what is needed:
 - Agent-to-agent reports use Caveman format.
 - This skill's default niche is lightweight cold-start side projects, not heavyweight enterprise SDLC replacement.
 - `factory_preflight.py` must pass before app/product implementation starts.
+- The User-Wait Monitor Rule applies every time the skill asks the user to answer, approve, choose, or revise.
 - The first user idea is not a build spec. Treat it as discovery input until Direction Lock is approved.
 - Enforce implementation freeze before Direction Lock: no implementation tasks, no Engineer code, and no final PRD/GTM/design handoff may proceed unless the user explicitly skips discovery.
 - If discovery is skipped by the user, set `direction_lock.status` to `skipped_by_user`, record the risk in `operator_alerts[]`, and continue with the user's selected scope.
@@ -156,6 +170,7 @@ Load only what is needed:
 - Record every user decision in `.factory/factory-state.json` under `decisions`.
 - Show decision records in the monitor and create a message from Orchestrator to the next agent that uses the decision.
 - Before every user-facing report, update `report_sync` with `last_state_update_at`, `last_report_summary`, `monitor_status`, and `latest_event_id`. If the monitor update fails, report that failure plainly instead of implying the monitor is current.
+- Before every user-facing decision request, update `report_sync.last_prompt_requires_user`, `latest_decision_summary`, `user_waiting_summary`, `monitor_view`, and `monitor_opened_at`; open or surface the monitor path/URL in the reply.
 - For every task handoff, update `tasks[].agent_steps[]` with `agent`, `persona`, `did`, `output`, `artifacts`, `handoff_to`, `handoff_summary`, `evidence`, and `status`. Do not rely on persona descriptions as work evidence.
 - For decisions, include `related_docs` or `artifact_paths` when relevant so the dashboard can open the supporting Markdown.
 
@@ -262,6 +277,8 @@ Recommended: <option>
 Reason: <one short reason>
 Options: A / B / C
 Monitor: <decision id, latest event id, and monitor status>
+Decision summary: <question, recommended option, and consequences>
+Monitor view: <served monitor URL or .factory/factory-dashboard.html>
 Proceeding automatically: <what will continue without user input>
 ```
 

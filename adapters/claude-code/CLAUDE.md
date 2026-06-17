@@ -27,7 +27,8 @@ python scripts/factory_preflight.py --project-root .
 ```
 
 8. Keep monitor/report sync current before user-facing updates.
-9. Before completion, run:
+9. When waiting for the user, surface `.factory/factory-dashboard.html` or the served monitor URL with the decision summary.
+10. Before completion, run:
 
 ```bash
 python scripts/verify_factory_run.py --project-root . --mode all

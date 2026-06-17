@@ -54,6 +54,8 @@ DIMENSIONS = [
         "weight": 12,
         "checks": [
             ("templates/factory-state.json", '"report_sync"'),
+            ("templates/factory-state.json", '"user_waiting_summary"'),
+            ("templates/factory-state.json", '"monitor_view"'),
             ("templates/factory-state.json", '"monitor_health"'),
             ("templates/factory-dashboard.html", 'data-panel="handoffs"'),
             ("templates/factory-dashboard.html", 'data-panel="direction-lock"'),
@@ -69,6 +71,7 @@ DIMENSIONS = [
             ("scripts/verify_factory_run.py", "check_acceptance_contract"),
             ("scripts/verify_factory_run.py", "check_dashboard"),
             ("scripts/verify_factory_run.py", "app-files-before-direction-lock"),
+            ("scripts/verify_factory_run.py", "user-wait-monitor-missing"),
             ("scripts/factory_preflight.py", "missing-factory-state"),
             ("scripts/factory_preflight.py", "direction-lock-not-approved"),
             ("scripts/validate_factory_schema.py", "BAD_TEXT_MARKERS"),
@@ -115,6 +118,7 @@ DIMENSIONS = [
         "checks": [
             ("SKILL.md", "description: Use when"),
             ("SKILL.md", "Preflight Stop Rule"),
+            ("SKILL.md", "User-Wait Monitor Rule"),
             ("README.md", "lightweight cold-start side projects"),
             ("agents/openai.yaml", "display_name"),
             ("agents/openai.yaml", "default_prompt"),

@@ -73,6 +73,7 @@ REQUIRED_FILES = [
     "scripts/benchmark_factory_skill.py",
     "scripts/factory_preflight.py",
     "tests/test_benchmark_integrity.py",
+    "tests/test_decision_monitor_reporting.py",
     "tests/test_preflight_guard.py",
     "tests/test_runtime_portability.py",
 ]
@@ -160,7 +161,17 @@ def check_state(skill_root: Path, findings: list[str]) -> None:
             fail(findings, f"missing-agent: {agent_id}")
 
     report_sync = state.get("report_sync", {})
-    for key in ["status", "latest_event_id", "monitor_status", "state_path"]:
+    for key in [
+        "status",
+        "latest_event_id",
+        "monitor_status",
+        "state_path",
+        "last_prompt_requires_user",
+        "latest_decision_summary",
+        "user_waiting_summary",
+        "monitor_view",
+        "monitor_opened_at",
+    ]:
         if key not in report_sync:
             fail(findings, f"missing-report-sync-field: {key}")
 
@@ -177,7 +188,7 @@ def check_text(skill_root: Path, findings: list[str]) -> None:
         fail(findings, "SKILL.md must not claim a Codex-only runtime")
     if "runtime-neutral" not in skill_text:
         fail(findings, "SKILL.md must describe the workflow as runtime-neutral")
-    for required in ["Preflight Stop Rule", "factory_preflight.py", "lightweight cold-start"]:
+    for required in ["Preflight Stop Rule", "factory_preflight.py", "lightweight cold-start", "User-Wait Monitor Rule"]:
         if required not in skill_text:
             fail(findings, f"missing-skill-preflight-text: {required}")
     for required in REQUIRED_SKILL_TEXT:
@@ -190,9 +201,14 @@ def check_text(skill_root: Path, findings: list[str]) -> None:
             fail(findings, f"missing-planning-text: {required}")
 
     monitor = (skill_root / "references" / "factory-monitor.md").read_text(encoding="utf-8")
-    for required in ["council_reports", "option_matrix", "direction_lock", "report_sync"]:
+    for required in ["council_reports", "option_matrix", "direction_lock", "report_sync", "User-Wait Display"]:
         if required not in monitor:
             fail(findings, f"missing-monitor-text: {required}")
+
+    reporting = (skill_root / "references" / "reporting-sync.md").read_text(encoding="utf-8")
+    for required in ["User-Wait Monitor Rule", "Monitor view", "latest_decision_summary", "user_waiting_summary"]:
+        if required not in reporting:
+            fail(findings, f"missing-reporting-sync-text: {required}")
 
     benchmark = (skill_root / "references" / "benchmark-rubric.md").read_text(encoding="utf-8")
     for required in ["No Peer Ranking", "Scoring Dimensions", "Total score: 100", "External Evaluation Plan"]:
@@ -220,6 +236,11 @@ def check_text(skill_root: Path, findings: list[str]) -> None:
     for required in ["missing-factory-state", "direction-lock-not-approved", "app-files-before-direction-lock"]:
         if required not in preflight:
             fail(findings, f"missing-preflight-script-text: {required}")
+
+    updater = (skill_root / "scripts" / "update_factory_state.py").read_text(encoding="utf-8")
+    for required in ["last_prompt_requires_user", "latest_decision_summary", "user_waiting_summary", "monitor_opened_at"]:
+        if required not in updater:
+            fail(findings, f"missing-updater-user-wait-text: {required}")
 
     dashboard = (skill_root / "templates" / "factory-dashboard.html").read_text(encoding="utf-8")
     for required in REQUIRED_DASHBOARD_TEXT:
