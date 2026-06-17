@@ -14,6 +14,10 @@ from pathlib import Path
 from typing import Any
 
 
+STATE_SCRIPT_START = '<script id="fallback-state" type="application/json">'
+STATE_SCRIPT_END = "</script>"
+
+
 def now() -> str:
     return _dt.datetime.now(_dt.timezone.utc).isoformat()
 
@@ -33,9 +37,32 @@ def load_state(path: Path) -> dict[str, Any]:
     return data if isinstance(data, dict) else {}
 
 
+def load_template_state(skill_root: Path) -> dict[str, Any]:
+    template_state = skill_root / "templates" / "factory-state.json"
+    if not template_state.exists():
+        return {}
+    data = json.loads(template_state.read_text(encoding="utf-8-sig"))
+    return data if isinstance(data, dict) else {}
+
+
 def save_state(path: Path, state: dict[str, Any]) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(state, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+
+def embed_state_snapshot(dashboard_path: Path, state: dict[str, Any]) -> None:
+    text = dashboard_path.read_text(encoding="utf-8")
+    start = text.find(STATE_SCRIPT_START)
+    if start == -1:
+        raise SystemExit("dashboard template is missing fallback-state script")
+    json_start = start + len(STATE_SCRIPT_START)
+    end = text.find(STATE_SCRIPT_END, json_start)
+    if end == -1:
+        raise SystemExit("dashboard template fallback-state script is not closed")
+    snapshot = dict(state)
+    snapshot["__embedded_snapshot"] = True
+    snapshot_text = "\n" + json.dumps(snapshot, ensure_ascii=False, indent=2) + "\n"
+    dashboard_path.write_text(text[:json_start] + snapshot_text + text[end:], encoding="utf-8")
 
 
 def ensure_monitor(project_root: Path, skill_root: Path, state_path: Path, should_open: bool) -> dict[str, Any]:
@@ -48,27 +75,10 @@ def ensure_monitor(project_root: Path, skill_root: Path, state_path: Path, shoul
         raise SystemExit(f"dashboard template does not exist: {template_path}")
     shutil.copyfile(template_path, dashboard_path)
 
+    state = load_state(state_path) or load_template_state(skill_root)
+
     dashboard_uri = dashboard_path.resolve().as_uri()
-    opened = False
-    if should_open:
-        opened = bool(webbrowser.open(dashboard_uri))
 
-    meta = {
-        "project_root": str(project_root.resolve()),
-        "dashboard_path": str(dashboard_path.resolve()),
-        "template_path": str(template_path.resolve()),
-        "dashboard_sha256": sha256(dashboard_path),
-        "template_sha256": sha256(template_path),
-        "state_path": str(state_path.resolve()),
-        "server_port": "",
-        "served_url": dashboard_uri,
-        "opened": opened,
-        "updated_at": now(),
-    }
-    (factory_dir / "monitor-meta.json").write_text(json.dumps(meta, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    (factory_dir / "monitor-url.txt").write_text(f"{dashboard_uri}\nproject_root={project_root.resolve()}\n", encoding="utf-8")
-
-    state = load_state(state_path)
     report_sync = state.setdefault("report_sync", {})
     report_sync.update(
         {
@@ -89,14 +99,35 @@ def ensure_monitor(project_root: Path, skill_root: Path, state_path: Path, shoul
             "monitor_url_path": ".factory/monitor-url.txt",
             "meta_path": ".factory/monitor-meta.json",
             "last_refresh_at": now(),
-            "dashboard_sha256": meta["dashboard_sha256"],
-            "template_sha256": meta["template_sha256"],
+            "dashboard_sha256": "embedded-state-snapshot",
+            "template_sha256": sha256(template_path),
             "served_url": dashboard_uri,
             "served_matches_local": True,
+            "embedded_state_snapshot": True,
             "stale_reason": "",
         }
     )
     save_state(state_path, state)
+    embed_state_snapshot(dashboard_path, state)
+    opened = False
+    if should_open:
+        opened = bool(webbrowser.open(dashboard_uri))
+
+    meta = {
+        "project_root": str(project_root.resolve()),
+        "dashboard_path": str(dashboard_path.resolve()),
+        "template_path": str(template_path.resolve()),
+        "dashboard_sha256": sha256(dashboard_path),
+        "template_sha256": sha256(template_path),
+        "state_path": str(state_path.resolve()),
+        "server_port": "",
+        "served_url": dashboard_uri,
+        "opened": opened,
+        "embedded_state_snapshot": True,
+        "updated_at": now(),
+    }
+    (factory_dir / "monitor-meta.json").write_text(json.dumps(meta, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    (factory_dir / "monitor-url.txt").write_text(f"{dashboard_uri}\nproject_root={project_root.resolve()}\n", encoding="utf-8")
     return meta
 
 

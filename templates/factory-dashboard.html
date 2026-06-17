@@ -275,6 +275,10 @@ code { display: inline-block; max-width: 100%; overflow-wrap: anywhere; backgrou
         <h2>Handoffs <span id="handoffBadge" class="badge">0 sent</span></h2>
         <div id="handoffs"></div>
       </section>
+      <section class="panel" data-panel="decision-history">
+        <h2>Decision History <span id="decisionHistoryBadge" class="badge">0 decisions</span></h2>
+        <div id="decisionHistory"></div>
+      </section>
       <section class="panel" data-panel="gates">
         <h2>Gates</h2>
         <div id="gates"></div>
@@ -464,8 +468,9 @@ function renderCouncilReports(state) {
 
 function renderOptions(state) {
   const options = state.option_matrix || [];
+  const capabilities = state.candidate_capabilities || [];
   document.getElementById("optionBadge").textContent = `${options.length} options`;
-  document.getElementById("optionMatrix").innerHTML = options.length ? options.map((option) => `
+  const optionCards = options.length ? options.map((option) => `
     <article class="mini">
       <b>${esc(option.label || option.id)} ${badge(option.status || "candidate")}</b>
       <p><strong>${esc(option.target_user || "No target")}</strong> - ${esc(option.user_job || "No job")}</p>
@@ -474,6 +479,15 @@ function renderOptions(state) {
       <ul>${shortList(option.risks, "no risks recorded")}</ul>
     </article>
   `).join("") : `<article class="mini"><b>No options yet</b><p>The option matrix appears after Discovery Council.</p></article>`;
+  const capabilityCards = capabilities.length ? capabilities.map((item) => `
+    <article class="mini">
+      <b>${esc(item.capability || item.name || "Candidate capability")} ${badge(item.feasibility || "candidate")}</b>
+      <p>${esc(item.why_it_matters || item.user_value || "No value summary recorded.")}</p>
+      <p>Requires: ${esc((item.requires || item.required_integration || []).join ? (item.requires || item.required_integration || []).join(", ") : item.requires || "not set")}</p>
+      <p>Fallback: ${esc(item.fallback || "not set")} | Approval: ${esc(item.needs_user_approval ?? "not set")}</p>
+    </article>
+  `).join("") : "";
+  document.getElementById("optionMatrix").innerHTML = optionCards + capabilityCards;
 }
 
 function renderTasks(state) {
@@ -484,11 +498,29 @@ function renderTasks(state) {
     <article class="mini">
       <b>${String(index + 1).padStart(2, "0")} ${esc(task.title || task.id)} ${badge(task.status)}</b>
       <p>${esc(task.goal || task.summary || "No goal recorded.")}</p>
-      <p>Difficulty: ${esc(task.difficulty || "unknown")}</p>
+      <p>Difficulty: ${esc(task.difficulty || "unknown")} | Agents: ${esc((task.agent_flow || []).join(" -> ") || task.agent_owner || "not assigned")}</p>
       <p>Entrypoint: ${esc(task.app_entrypoint || "not set")}</p>
+      <p>Artifacts: ${esc([...(task.artifacts || []), task.qa_evidence_path].filter(Boolean).join(", ") || "none recorded")}</p>
+      ${renderAgentSteps(task)}
     </article>
   `).join("") : `<article class="mini"><b>No tasks yet</b><p>Task cards should be created after Direction Lock and planning approval.</p></article>`;
   document.getElementById("taskMetric").textContent = `${done}/${tasks.length}`;
+}
+
+function renderAgentSteps(task) {
+  const steps = task.agent_steps || [];
+  if (!steps.length) return `<div class="list-row"><div><b>Agent work</b><p>작업 기록 없음</p></div>${badge("pending")}</div>`;
+  return `<div>${steps.map((step) => `
+    <div class="list-row">
+      <div>
+        <b>${esc(step.agent || "agent")} ${step.persona ? `(${esc(step.persona)})` : ""}</b>
+        <p>${esc(step.did || step.output || "No concrete work recorded.")}</p>
+        <p>Handoff: ${esc(step.handoff_to || "none")} ${step.handoff_summary ? `- ${esc(step.handoff_summary)}` : ""}</p>
+        <p>Evidence: ${esc(step.evidence || "not recorded")}</p>
+      </div>
+      ${badge(step.status || "pending")}
+    </div>
+  `).join("")}</div>`;
 }
 
 function renderSidePanels(state) {
@@ -498,6 +530,7 @@ function renderSidePanels(state) {
   const messages = state.messages || [];
   const gates = state.gates || [];
   const artifacts = state.artifacts || [];
+  const decisions = state.decisions || [];
   document.getElementById("reportSync").innerHTML = `
     <div class="mini">
       <b>${badge(sync.status || "pending")} ${badge(sync.monitor_status || "state_only")}</b>
@@ -525,6 +558,16 @@ function renderSidePanels(state) {
       <p>Expected: ${esc(message.expected_output || "not set")}</p>
     </div>
   `).join("") : `<div class="mini"><b>No handoffs yet</b><p>Direction Lock and task handoffs will appear here.</p></div>`;
+  document.getElementById("decisionHistoryBadge").textContent = `${decisions.length} decisions`;
+  document.getElementById("decisionHistory").innerHTML = decisions.length ? decisions.slice(-8).reverse().map((decision) => `
+    <div class="mini">
+      <b>${esc(decision.id || "decision")} ${badge(decision.status || "recorded")}</b>
+      <p>${esc(decision.question || "No question recorded.")}</p>
+      <p>Recommended: ${esc(decision.recommended || "not set")} | Selected: ${esc(decision.selected || "not selected")}</p>
+      <p>${esc(decision.reason || "")}</p>
+      <div class="doc-links">${[...(decision.related_docs || []), ...(decision.artifact_paths || [])].map((path) => docButton(path)).join("")}</div>
+    </div>
+  `).join("") : `<div class="mini"><b>No decisions recorded</b><p>User choices will appear here after approval gates.</p></div>`;
   document.getElementById("gates").innerHTML = gates.slice(0, 10).map((gate) => `
     <div class="list-row"><div><b>${esc(gate.name || gate.id)}</b><p>${esc(gate.summary || "")}</p></div>${badge(gate.status)}</div>
   `).join("") || `<div class="mini"><b>No gates recorded</b></div>`;

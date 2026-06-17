@@ -237,7 +237,7 @@ def check_text(skill_root: Path, findings: list[str]) -> None:
             fail(findings, f"missing-domain-affordance-text: {required}")
 
     monitor = (skill_root / "references" / "factory-monitor.md").read_text(encoding="utf-8")
-    for required in ["council_reports", "option_matrix", "direction_lock", "report_sync", "User-Wait Display"]:
+    for required in ["council_reports", "option_matrix", "direction_lock", "report_sync", "User-Wait Display", "embedded_state_snapshot", "decision history", "agent_steps"]:
         if required not in monitor:
             fail(findings, f"missing-monitor-text: {required}")
 
@@ -304,7 +304,7 @@ def check_text(skill_root: Path, findings: list[str]) -> None:
             fail(findings, f"missing-updater-user-wait-text: {required}")
 
     ensure_monitor = (skill_root / "scripts" / "ensure_factory_monitor.py").read_text(encoding="utf-8")
-    for required in ["factory-dashboard.html", "monitor-meta.json", "monitor-url.txt", "webbrowser.open"]:
+    for required in ["factory-dashboard.html", "monitor-meta.json", "monitor-url.txt", "webbrowser.open", "embed_state_snapshot", "embedded_state_snapshot"]:
         if required not in ensure_monitor:
             fail(findings, f"missing-ensure-monitor-text: {required}")
 
@@ -312,6 +312,9 @@ def check_text(skill_root: Path, findings: list[str]) -> None:
     for required in REQUIRED_DASHBOARD_TEXT:
         if required not in dashboard:
             fail(findings, f"missing-dashboard-text: {required}")
+    for required in ["decision-history", "renderAgentSteps", "agent_steps", "Decision History"]:
+        if required not in dashboard:
+            fail(findings, f"missing-dashboard-monitor-detail-text: {required}")
 
     openai_yaml = (skill_root / "agents" / "openai.yaml").read_text(encoding="utf-8")
     for required in ["display_name", "short_description", "default_prompt", "$vibe-coding-factory"]:

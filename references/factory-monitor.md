@@ -257,7 +257,14 @@ The agent role flow should make it obvious how work moves:
 
 Each agent card should show role, latest concrete work, participation count, and main handoff targets when state data is available.
 
-Because browser security may block local `fetch()` for `file://`, the dashboard includes embedded sample state. For live local viewing, prefer serving the project folder with a local static server and opening `.factory/factory-dashboard.html`.
+Because browser security may block local `fetch()` for `file://`, `scripts/ensure_factory_monitor.py` must embed the current `.factory/factory-state.json` snapshot into `.factory/factory-dashboard.html` and set `monitor_health.embedded_state_snapshot`. The fallback state must not be empty placeholder state when a real state file exists. If no state file exists, initialize from `templates/factory-state.json` so agent lanes, gates, and baseline monitor structure are still visible.
+
+The dashboard must show:
+
+- decision history, not only decisions currently waiting for the user;
+- task roadmap with `agent_steps`, handoffs, evidence, and artifacts;
+- agent flow lanes even before tasks exist;
+- artifacts, gates, messages, and timeline from concrete state entries.
 
 ## Status Values
 

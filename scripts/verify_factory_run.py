@@ -90,6 +90,8 @@ OUT_OF_SEED_MARKERS = (
     "open-ended",
     "free input",
 )
+STATE_SCRIPT_START = '<script id="fallback-state" type="application/json">'
+STATE_SCRIPT_END = "</script>"
 
 
 class Finding:
@@ -134,6 +136,17 @@ def sha256(path: Path) -> str:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def strip_embedded_state(text: str) -> str:
+    start = text.find(STATE_SCRIPT_START)
+    if start == -1:
+        return text
+    json_start = start + len(STATE_SCRIPT_START)
+    end = text.find(STATE_SCRIPT_END, json_start)
+    if end == -1:
+        return text
+    return text[:json_start] + "\n__STATE_SNAPSHOT__\n" + text[end:]
 
 
 def is_pass(value: Any) -> bool:
@@ -619,10 +632,13 @@ def check_dashboard(
     if template_path and template_path.exists():
         template_hash = sha256(template_path)
         if template_hash != dashboard_hash:
-            collector.fail(
-                "stale-dashboard",
-                "project dashboard hash differs from current template; refresh .factory/factory-dashboard.html",
-            )
+            dashboard_text = dashboard_path.read_text(encoding="utf-8", errors="replace")
+            template_text = template_path.read_text(encoding="utf-8", errors="replace")
+            if strip_embedded_state(dashboard_text) != strip_embedded_state(template_text):
+                collector.fail(
+                    "stale-dashboard",
+                    "project dashboard differs from current template beyond embedded state snapshot; refresh .factory/factory-dashboard.html",
+                )
     elif template_path:
         collector.warn("missing-template", f"dashboard template not found: {template_path}")
 
