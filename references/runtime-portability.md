@@ -18,6 +18,7 @@ Keep these rules the same across runtimes:
 - Surface the monitor path or URL whenever the host asks the user to approve, choose, answer, or revise.
 - Prefer `scripts/ensure_factory_monitor.py --project-root . --open` before every user-wait prompt.
 - Write user-facing decisions, planning artifacts, monitor summaries, blocker reports, and completion reports in Korean by default. Internal agent handoffs, ids, commands, paths, event types, and JSON keys may stay English.
+- Do not silently downgrade live/API/open-ended product intent into fixed seed data, canned results, or tiny closed dropdowns. Record `capability_contract` and approved fallbacks in `docs/ACCEPTANCE_CONTRACT.json`.
 
 ## Runtime Adapters
 

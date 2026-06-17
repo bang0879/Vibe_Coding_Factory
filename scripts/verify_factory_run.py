@@ -62,6 +62,18 @@ APP_DIRS = {"app", "src", "components", "pages", "views", "routes"}
 APP_SUFFIXES = {".html", ".htm", ".jsx", ".tsx", ".vue", ".svelte"}
 IGNORED_APP_SCAN_DIRS = {".git", ".factory", "node_modules", "__pycache__", ".next", "dist", "build"}
 APPROVED_LOCK_STATUSES = {"approved", "locked", "skipped_by_user"}
+CAPABILITY_MODES = {"live", "user_data", "local_functional", "partial"}
+OUT_OF_SEED_MARKERS = (
+    "out-of-seed",
+    "out_of_seed",
+    "unlisted input",
+    "outside seed",
+    "not present in preset",
+    "not one of the preset",
+    "not in seed",
+    "open-ended",
+    "free input",
+)
 
 
 class Finding:
@@ -125,6 +137,11 @@ def as_list(value: Any) -> list[Any]:
 def slug(value: Any) -> str:
     text = re.sub(r"[^a-z0-9]+", "-", str(value).lower()).strip("-")
     return text.replace("growth-and-moat", "growth-moat")
+
+
+def contains_any_marker(value: Any, markers: tuple[str, ...]) -> bool:
+    text = json.dumps(value, ensure_ascii=False, sort_keys=True).lower()
+    return any(marker in text for marker in markers)
 
 
 def rel_inside_factory(path_text: str) -> bool:
@@ -369,6 +386,53 @@ def check_acceptance_contract(project_root: Path, collector: Collector) -> dict[
         for key in ("given", "when", "then", "evidence"):
             if not scenario.get(key):
                 collector.fail("contract-scenario-field", f"{scenario_id} is missing {key}")
+
+    capability = contract.get("capability_contract")
+    open_input_required = False
+    if not isinstance(capability, dict):
+        collector.fail("contract-capability-missing", "acceptance contract must define capability_contract")
+    else:
+        mode = str(capability.get("mode", "")).strip().lower()
+        if mode not in CAPABILITY_MODES:
+            collector.fail("contract-capability-mode", f"capability_contract.mode must be one of {sorted(CAPABILITY_MODES)}")
+
+        input_freedom = as_list(capability.get("input_freedom"))
+        if not input_freedom:
+            collector.fail("contract-input-freedom", "capability_contract.input_freedom must define user input freedom")
+        for index, item in enumerate(input_freedom, start=1):
+            if not isinstance(item, dict):
+                collector.fail("contract-input-freedom-shape", f"input_freedom #{index} must be an object")
+                continue
+            field = item.get("field")
+            expected_control = item.get("expected_control")
+            if field in ("", None):
+                collector.fail("contract-input-field", f"input_freedom #{index} is missing field")
+            if expected_control in ("", None):
+                collector.fail("contract-input-control", f"input_freedom #{index} is missing expected_control")
+            if "closed_set_allowed" not in item:
+                collector.fail("contract-input-closed-set", f"input_freedom #{index} must state closed_set_allowed")
+            if item.get("closed_set_allowed") is False:
+                open_input_required = True
+
+        if not as_list(capability.get("forbidden_downgrades")):
+            collector.fail("contract-forbidden-downgrades", "capability_contract.forbidden_downgrades must name disallowed downgrades")
+
+        requires_live = capability.get("requires_live_data_or_api") is True
+        if requires_live and mode != "live" and not as_list(capability.get("approved_fallbacks")):
+            collector.fail("contract-live-fallback-unapproved", "live/API capability requires approved_fallbacks when mode is not live")
+
+        sample_policy = capability.get("sample_data_policy", {})
+        if mode in {"local_functional", "partial"}:
+            if not isinstance(sample_policy, dict):
+                collector.fail("contract-sample-policy", "local_functional or partial mode must define sample_data_policy")
+            elif sample_policy.get("must_label_sample_mode") is not True:
+                collector.fail("contract-sample-label", "sample/local mode must label sample mode to the user")
+
+    if open_input_required and not any(contains_any_marker(scenario, OUT_OF_SEED_MARKERS) for scenario in scenarios):
+        collector.fail(
+            "contract-out-of-seed-scenario",
+            "open-ended input requires at least one out-of-seed or unlisted-input primary scenario",
+        )
 
     verification = contract.get("verification", {})
     entrypoint = verification.get("real_entrypoint") if isinstance(verification, dict) else ""

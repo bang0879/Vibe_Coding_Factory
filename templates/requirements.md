@@ -9,6 +9,17 @@
 - Non-negotiable outcomes:
 - Done means:
 
+## Capability Contract
+
+- Capability mode: `live` / `user_data` / `local_functional` / `partial`
+- Requires live data or API:
+- External dependencies:
+- Approved fallbacks:
+- Forbidden downgrades:
+- Open-ended input fields:
+- Closed-set fields explicitly approved:
+- Sample data label and replacement path:
+
 ## Requirements
 
 Use testable acceptance criteria. Prefer this shape:
@@ -35,6 +46,17 @@ Priority: must
 
 - Requirement ids:
 - Given:
+- When:
+- Then:
+- Evidence to collect:
+- Status: pending
+
+### SCN-OUT-OF-SEED
+
+Use this scenario when any approved input is open-ended.
+
+- Requirement ids:
+- Given: an input value not present in preset chips or seed categories
 - When:
 - Then:
 - Evidence to collect:

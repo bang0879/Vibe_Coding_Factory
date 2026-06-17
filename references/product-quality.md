@@ -24,6 +24,25 @@ Reject as incomplete:
 - Controls that do not change state.
 - A factory monitor, screenshot, or design mockup used as the app.
 - Sample data so tiny that the user's main choice has no meaningful range.
+- A real-world or open-ended capability silently downgraded into a closed seed-data demo.
+
+## Capability Realism Gate
+
+Before implementation, classify the app's capability mode in `docs/ACCEPTANCE_CONTRACT.json`:
+
+- `live`: the app uses real integration, live data, or a real backend/API.
+- `user_data`: the app works from user-provided files, pasted data, or configured local data.
+- `local_functional`: the app is intentionally local with realistic sample data and clearly labeled limits.
+- `partial`: useful behavior exists, but promised real-world capability remains incomplete.
+
+Rules:
+
+- Do not use `local_functional` or `partial` as a silent substitute for `live`. Ask the user first and record the approved fallback.
+- Minimum data breadth is a floor, not a ceiling. "At least 12 candidates" does not allow narrowing the product to only 12 candidates or 5 preset filters.
+- Preserve approved input freedom. If the contract says location, topic, customer, URL, date range, or other field is open-ended, implement free input or import. Preset chips are shortcuts only.
+- Closed dropdowns are allowed only when Direction Lock or `capability_contract.input_freedom[].closed_set_allowed` explicitly approves a closed set.
+- For recommendation, search, briefing, or planning apps, QA must test at least one out-of-seed or unlisted input and record whether the app handles it honestly.
+- If an external API key, network access, account, scraper, or dataset is required, Technical Feasibility Architect must report the requirement and the user must approve the fallback before implementation.
 
 ## Choice Breadth Gate
 
@@ -35,6 +54,8 @@ If the app helps the user choose, compare, recommend, plan, filter, generate, sc
 - Verify selected items and generated reports are derived from current state.
 
 For recommendation apps, use at least 8-12 seeded candidates by default and test two contrasting scenarios.
+
+Seeded candidates may support local testing, but they do not define the full product domain unless the user explicitly approved a seed-only product. When seed data is the chosen mode, label it in the UI or docs and provide a replacement path such as import, config file, API adapter, or data module.
 
 ## Design Durability Gate
 
@@ -83,6 +104,7 @@ Before completion:
 
 - Verify every Scenario Harness flow.
 - Verify generated or recommended outputs depend on the current input/state.
+- Verify at least one out-of-seed or unlisted-input scenario when the approved input is open-ended.
 - Verify the rendered app matches the approved design brief.
 - Verify enough data/examples exist for the user to judge the product.
 - Run `python vibe-coding-factory/scripts/verify_factory_run.py --project-root . --mode all` and record the pass/fail result in `docs/QA_EVIDENCE.md` and `.factory/factory-state.json`.

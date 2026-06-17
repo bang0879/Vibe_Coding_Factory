@@ -27,6 +27,17 @@
 - Actual:
 - Status:
 
+## Capability Realism Evidence
+
+- Capability mode tested:
+- Live/API dependency tested or approved fallback confirmed:
+- Open-ended input preserved:
+- Preset chips are shortcuts, not the only path:
+- Out-of-seed or unlisted input tried:
+- Result or honest blocked/empty state:
+- Seed/sample mode label visible, if applicable:
+- Data replacement path verified:
+
 ## Design Parity Evidence
 
 - First-screen structure:

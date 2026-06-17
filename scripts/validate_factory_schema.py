@@ -54,6 +54,7 @@ REQUIRED_SKILL_TEXT = [
     "council_reports[]",
     "option_matrix[]",
     "User-Facing Korean Output Rule",
+    "No Silent Capability Downgrade Rule",
 ]
 
 REQUIRED_FILES = [
@@ -75,6 +76,7 @@ REQUIRED_FILES = [
     "scripts/ensure_factory_monitor.py",
     "scripts/factory_preflight.py",
     "tests/test_benchmark_integrity.py",
+    "tests/test_capability_realism.py",
     "tests/test_decision_monitor_reporting.py",
     "tests/test_korean_user_outputs.py",
     "tests/test_monitor_opening.py",
@@ -244,7 +246,7 @@ def check_text(skill_root: Path, findings: list[str]) -> None:
             fail(findings, f"missing-benchmark-script-text: {required}")
 
     portability = (skill_root / "references" / "runtime-portability.md").read_text(encoding="utf-8")
-    for required in ["Codex", "Claude Code", "Generic agents", "Portable Invariants", "factory_preflight.py", "Korean by default"]:
+    for required in ["Codex", "Claude Code", "Generic agents", "Portable Invariants", "factory_preflight.py", "Korean by default", "capability_contract"]:
         if required not in portability:
             fail(findings, f"missing-portability-text: {required}")
 
@@ -252,6 +254,21 @@ def check_text(skill_root: Path, findings: list[str]) -> None:
         template = (skill_root / rel_path).read_text(encoding="utf-8")
         if LANGUAGE_MARKER not in template:
             fail(findings, f"missing-template-language-marker: {rel_path}")
+
+    acceptance_contract = (skill_root / "templates" / "acceptance-contract.json").read_text(encoding="utf-8")
+    for required in ["capability_contract", "input_freedom", "forbidden_downgrades", "SCN-OUT-OF-SEED", "minimum_realistic_items_is_floor_not_ceiling"]:
+        if required not in acceptance_contract:
+            fail(findings, f"missing-acceptance-contract-text: {required}")
+
+    product_quality = (skill_root / "references" / "product-quality.md").read_text(encoding="utf-8")
+    for required in ["Capability Realism Gate", "out-of-seed", "Minimum data breadth is a floor", "Closed dropdowns"]:
+        if required not in product_quality:
+            fail(findings, f"missing-product-quality-text: {required}")
+
+    verifier = (skill_root / "scripts" / "verify_factory_run.py").read_text(encoding="utf-8")
+    for required in ["contract-capability-missing", "contract-out-of-seed-scenario", "contract-live-fallback-unapproved"]:
+        if required not in verifier:
+            fail(findings, f"missing-verifier-capability-text: {required}")
 
     cold_start = (skill_root / "references" / "cold-start-side-projects.md").read_text(encoding="utf-8")
     for required in ["lightweight cold-start side projects", "Lightweight Council", "Completion Standard"]:

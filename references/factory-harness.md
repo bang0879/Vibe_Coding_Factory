@@ -15,6 +15,8 @@ Create these files before implementation for complete product requests:
 
 The acceptance contract is the source of truth for user intent, primary scenarios, design invariants, data breadth, verification commands, and completion status.
 
+It must also record `capability_contract`: capability mode, live/API dependencies, approved fallbacks, forbidden downgrades, input freedom, and sample-data policy. This prevents a real-world or open-ended product from silently becoming a seed-data mockup.
+
 ## Executable Gate
 
 Run this before marking a user-facing app task or factory run complete:
@@ -34,12 +36,15 @@ The gate checks:
 - monitor dashboard and template hashes match when the template is available.
 - monitor metadata records the active project root and served URL.
 - required docs and artifacts exist when the project is marked complete.
+- `capability_contract` exists and includes open-input and fallback decisions.
+- open-ended products include an out-of-seed or unlisted-input scenario.
 
 ## Browser Evidence
 
 For interactive apps, the script is necessary but not sufficient. QA must also use the app URL, browser automation, or manual browser evidence to record:
 
 - two contrasting input/state changes with different visible outputs;
+- one out-of-seed or unlisted-input check when any approved input is open-ended;
 - one empty, error, or blocked state when relevant;
 - before/after visible result summaries;
 - the exact app URL or file path tested.

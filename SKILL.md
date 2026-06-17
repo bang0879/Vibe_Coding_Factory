@@ -58,6 +58,16 @@ Internal agent-to-agent messages, Caveman handoffs, machine ids, event types, JS
 
 If a template has English headings, keep machine-readable labels and ids stable, but write explanations, choices, consequences, recommendations, and plan details in Korean.
 
+## No Silent Capability Downgrade Rule
+
+Do not silently replace an approved real-world, open-ended, or API-backed capability with a fixed seed demo, canned result, narrowed dropdown, static list, or mockup. If an external integration, live data source, broad search space, or open input cannot be implemented in the current run, stop and ask the user to choose between live integration, user-provided data, clearly labeled local functional demo, or partial delivery.
+
+Minimum data breadth is a floor, not a ceiling. A requirement like "at least 12 candidates" does not allow the agent to close an open domain into 12 items or 5 preset filters unless Direction Lock explicitly approved that constraint.
+
+Preserve approved input freedom. If the Direction Lock or requirements say the user can enter a place, topic, customer, URL, date range, or other open field, implement a free input or import path. Preset chips may be added as shortcuts, but a closed dropdown is allowed only when the contract explicitly says the field is closed-set.
+
+Record the chosen capability mode and any approved fallback in `docs/ACCEPTANCE_CONTRACT.json` under `capability_contract`, then verify at least one out-of-seed or unlisted-input scenario before claiming completion.
+
 ## Core Flow
 
 1. Capture the user's project idea, purpose, target user, and success criteria.
@@ -143,6 +153,7 @@ Load only what is needed:
 
 - The user-facing language is Korean unless the user requests otherwise.
 - User-facing decision prompts and planning artifacts follow the User-Facing Korean Output Rule.
+- Real app delivery follows the No Silent Capability Downgrade Rule.
 - Agent-to-agent reports use Caveman format.
 - This skill's default niche is lightweight cold-start side projects, not heavyweight enterprise SDLC replacement.
 - `factory_preflight.py` must pass before app/product implementation starts.
@@ -159,10 +170,11 @@ Load only what is needed:
 - If the same failure happens 3 times, stop and report the blocker.
 - Do not proceed to the next task unless Engineer, QA, UX, Consumer Appeal when user-facing, and Scope Auditor gates pass.
 - Do not count `.factory` monitor HTML, static dashboard HTML, screenshots, or embedded sample state as a working app. If a task claims an interactive app, verify the real app entrypoint and at least one input-driven output change before marking it done.
+- Do not turn open-ended input into a tiny closed dropdown or fixed seed universe unless the user approved that exact downgrade.
 - For user-facing apps, enforce Product Quality Gates: meaningful data breadth, input-driven behavior, design durability, responsive states, and QA evidence. If these are missing, mark the task `reopened` or `failed`, not `done`.
 - For complete product requests, create an Intent Lock and Scenario Harness before implementation. Do not mark the run `complete` unless every primary scenario, design parity check, and QA evidence item in `references/completion-harness.md` passes.
 - Treat "buttons click" as insufficient. Completion requires meaningful state transitions and visible outputs derived from current user input.
-- For complete product requests, create `docs/REQUIREMENTS.md`, `docs/ACCEPTANCE_CONTRACT.json`, `docs/IMPLEMENTATION_PLAN.md`, and `docs/QA_EVIDENCE.md` from the templates before implementation. Keep requirement ids and scenario ids linked to task cards.
+- For complete product requests, create `docs/REQUIREMENTS.md`, `docs/ACCEPTANCE_CONTRACT.json`, `docs/IMPLEMENTATION_PLAN.md`, and `docs/QA_EVIDENCE.md` from the templates before implementation. Keep requirement ids, scenario ids, capability mode, and fallback approvals linked to task cards.
 - Run `python "<skill-root>/scripts/verify_factory_run.py" --project-root . --mode all` before reporting any user-facing app task or factory run as complete. Use the installed path of this skill as `<skill-root>`. If the script fails, reopen the responsible task and record the failing check in `.factory/factory-state.json`.
 - When editing this skill's discovery workflow or state schema, run `python scripts/validate_factory_schema.py --skill-root .` from the skill root before calling the update complete.
 - When editing this skill's workflow, monitor, state schema, helper scripts, or validation gates, run `python scripts/benchmark_factory_skill.py --skill-root .` from the skill root and review self-audit regressions before calling the update complete. Do not present this self-audit as a peer benchmark.

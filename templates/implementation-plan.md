@@ -18,6 +18,17 @@
 - Error and empty states:
 - Responsive strategy:
 
+## Capability Realism
+
+- Capability mode: `live` / `user_data` / `local_functional` / `partial`
+- Live/API dependencies and setup:
+- Approved fallback, if any:
+- Open-ended inputs to preserve:
+- Preset chips or dropdowns allowed only as:
+- Seed/sample data label:
+- Data replacement path:
+- Out-of-seed scenario to verify:
+
 ## Feature Slices
 
 | Slice | Requirement ids | Branch | Worktree | Issue | Verification |
@@ -28,6 +39,7 @@
 
 - Unit or logic checks:
 - Browser scenario checks:
+- Out-of-seed or unlisted-input check:
 - Design parity checks:
 - Accessibility and keyboard checks:
 - Security and privacy checks:

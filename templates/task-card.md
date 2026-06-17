@@ -71,6 +71,9 @@ completion_contract:
 - [ ] real app entrypoint exists outside .factory
 - [ ] scenario harness passed
 - [ ] input/state changes produce visible output changes
+- [ ] capability_contract mode and fallback match the implementation
+- [ ] open-ended inputs are not narrowed to a closed preset list unless approved
+- [ ] out-of-seed or unlisted-input scenario passed when relevant
 - [ ] design parity passed
 - [ ] QA evidence recorded
 - [ ] UX and Consumer Appeal passed

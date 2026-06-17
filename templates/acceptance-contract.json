@@ -6,6 +6,31 @@
     "non_negotiable_outcomes": [],
     "done_means": "Observable behavior in the real app, not only files, screenshots, or monitor state."
   },
+  "capability_contract": {
+    "mode": "local_functional",
+    "requires_live_data_or_api": false,
+    "external_dependencies": [],
+    "approved_fallbacks": [],
+    "forbidden_downgrades": [
+      "Do not replace approved open-ended inputs with a closed preset list unless the user approved that constraint.",
+      "Do not present seed data as live or exhaustive real-world coverage."
+    ],
+    "input_freedom": [
+      {
+        "field": "",
+        "expected_control": "free_text",
+        "may_use_presets_as_shortcuts": true,
+        "closed_set_allowed": false,
+        "rationale": ""
+      }
+    ],
+    "sample_data_policy": {
+      "allowed": true,
+      "must_label_sample_mode": true,
+      "replacement_path": "",
+      "minimum_realistic_items_is_floor_not_ceiling": true
+    }
+  },
   "requirements": [
     {
       "id": "REQ-001",
@@ -21,6 +46,15 @@
       "id": "SCN-001",
       "requirement_ids": ["REQ-001"],
       "given": "",
+      "when": "",
+      "then": "",
+      "evidence": "",
+      "status": "pending"
+    },
+    {
+      "id": "SCN-OUT-OF-SEED",
+      "requirement_ids": ["REQ-001"],
+      "given": "An out-of-seed or unlisted input that is not present in preset chips or seed categories.",
       "when": "",
       "then": "",
       "evidence": "",
