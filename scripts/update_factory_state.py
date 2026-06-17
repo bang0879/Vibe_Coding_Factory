@@ -99,8 +99,8 @@ def sync_report(
         report_sync["monitor_opened_at"] = now()
         report_sync["latest_decision_summary"] = decision_summary or summary
         report_sync["user_waiting_summary"] = (
-            f"Decision needed: {decision_summary or summary} | "
-            f"Monitor view: {view} | Event: {event_id}"
+            f"결정 필요: {decision_summary or summary} | "
+            f"모니터 보기: {view} | Event: {event_id}"
         )
     else:
         report_sync.setdefault("monitor_opened_at", "")
@@ -239,7 +239,7 @@ def cmd_decision(args: argparse.Namespace, state: dict[str, Any]) -> str:
             }
         )
     event_id = append_event(state, "decision_requested", "orchestrator", args.question, args.status)
-    decision_summary = f"{args.question} Recommended: {args.recommended}".strip()
+    decision_summary = f"{args.question} 추천: {args.recommended}".strip()
     sync_report(
         state,
         event_id,

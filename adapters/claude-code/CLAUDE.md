@@ -40,6 +40,8 @@ python scripts/ensure_factory_monitor.py --project-root . --open
 python scripts/verify_factory_run.py --project-root . --mode all
 ```
 
+11. Write user-facing decision prompts, planning artifacts, monitor summaries, blocker reports, and completion reports in Korean by default. Internal handoffs, ids, commands, paths, and JSON keys may stay English.
+
 ## Claude Code Notes
 
 - Use Claude Code task or sub-agent features only when the work can be separated cleanly.

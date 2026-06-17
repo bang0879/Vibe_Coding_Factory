@@ -17,6 +17,7 @@ Keep these rules the same across runtimes:
 - Run `scripts/factory_preflight.py` before creating or editing app/product files.
 - Surface the monitor path or URL whenever the host asks the user to approve, choose, answer, or revise.
 - Prefer `scripts/ensure_factory_monitor.py --project-root . --open` before every user-wait prompt.
+- Write user-facing decisions, planning artifacts, monitor summaries, blocker reports, and completion reports in Korean by default. Internal agent handoffs, ids, commands, paths, event types, and JSON keys may stay English.
 
 ## Runtime Adapters
 

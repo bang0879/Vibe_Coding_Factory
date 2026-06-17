@@ -1,5 +1,7 @@
 # Decision Brief
 
+> Language: Korean by default for user-facing content. Keep ids, commands, JSON keys, and file paths in English.
+
 ## Raw Idea
 
 - User idea:
@@ -77,12 +79,14 @@
 ## Decision Needed
 
 ```text
-Decision needed:
-Recommended:
-Reason:
-Options:
-Monitor:
-Proceeding automatically:
+결정 필요:
+추천:
+이유:
+선택지:
+결정 요약:
+모니터:
+모니터 보기:
+자동 진행:
 ```
 
 ## Open Questions

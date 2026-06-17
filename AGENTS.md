@@ -10,7 +10,8 @@ Use this repository as a runtime-neutral workflow for approval-gated app buildin
 4. Wait for Direction Lock before planning implementation.
 5. Keep `.factory/factory-state.json` and `.factory/factory-log.md` current.
 6. Update the monitor state before every user-facing report.
-7. Run the Factory Harness before claiming completion:
+7. Write user-facing decision prompts, plans, monitor summaries, blocker reports, and completion reports in Korean by default. Internal agent handoffs, ids, commands, paths, and JSON keys may stay English.
+8. Run the Factory Harness before claiming completion:
 
 ```bash
 python scripts/verify_factory_run.py --project-root . --mode all

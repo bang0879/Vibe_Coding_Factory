@@ -1,5 +1,7 @@
 # GTM
 
+> Language: Korean by default for user-facing content. Keep ids, commands, JSON keys, and file paths in English.
+
 ## Source Direction
 
 - Direction Lock: `docs/DIRECTION_LOCK.md`

@@ -61,7 +61,7 @@ class MonitorOpeningTests(unittest.TestCase):
                     "last_prompt_requires_user": True,
                     "latest_decision_id": "dec-001",
                     "latest_decision_summary": "Approve?",
-                    "user_waiting_summary": "Decision needed: Approve?",
+                    "user_waiting_summary": "결정 필요: Approve?",
                     "monitor_status": "current",
                     "monitor_view": str(project.with_name(project.name + ".factory") / "factory-dashboard.html"),
                 }

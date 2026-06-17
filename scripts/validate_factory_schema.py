@@ -53,6 +53,7 @@ REQUIRED_SKILL_TEXT = [
     "report_sync",
     "council_reports[]",
     "option_matrix[]",
+    "User-Facing Korean Output Rule",
 ]
 
 REQUIRED_FILES = [
@@ -75,6 +76,7 @@ REQUIRED_FILES = [
     "scripts/factory_preflight.py",
     "tests/test_benchmark_integrity.py",
     "tests/test_decision_monitor_reporting.py",
+    "tests/test_korean_user_outputs.py",
     "tests/test_monitor_opening.py",
     "tests/test_preflight_guard.py",
     "tests/test_runtime_portability.py",
@@ -108,6 +110,23 @@ FORBIDDEN_BENCHMARK_TEXT = [
     "rank:",
     "vibe-coding-factory target",
 ]
+
+USER_FACING_TEMPLATE_FILES = [
+    "templates/decision-brief.md",
+    "templates/direction-lock.md",
+    "templates/prd.md",
+    "templates/gtm.md",
+    "templates/design-brief.md",
+    "templates/implementation-plan.md",
+    "templates/requirements.md",
+    "templates/qa-evidence.md",
+    "templates/feasibility-report.md",
+    "templates/moat-strategy.md",
+    "templates/risk-register.md",
+    "templates/task-card.md",
+]
+
+LANGUAGE_MARKER = "Language: Korean by default for user-facing content"
 
 
 def fail(findings: list[str], message: str) -> None:
@@ -208,7 +227,7 @@ def check_text(skill_root: Path, findings: list[str]) -> None:
             fail(findings, f"missing-monitor-text: {required}")
 
     reporting = (skill_root / "references" / "reporting-sync.md").read_text(encoding="utf-8")
-    for required in ["User-Wait Monitor Rule", "Monitor view", "latest_decision_summary", "user_waiting_summary"]:
+    for required in ["User-Wait Monitor Rule", "Monitor view", "latest_decision_summary", "user_waiting_summary", "결정 필요", "모니터 보기", "English fallback"]:
         if required not in reporting:
             fail(findings, f"missing-reporting-sync-text: {required}")
 
@@ -225,9 +244,14 @@ def check_text(skill_root: Path, findings: list[str]) -> None:
             fail(findings, f"missing-benchmark-script-text: {required}")
 
     portability = (skill_root / "references" / "runtime-portability.md").read_text(encoding="utf-8")
-    for required in ["Codex", "Claude Code", "Generic agents", "Portable Invariants", "factory_preflight.py"]:
+    for required in ["Codex", "Claude Code", "Generic agents", "Portable Invariants", "factory_preflight.py", "Korean by default"]:
         if required not in portability:
             fail(findings, f"missing-portability-text: {required}")
+
+    for rel_path in USER_FACING_TEMPLATE_FILES:
+        template = (skill_root / rel_path).read_text(encoding="utf-8")
+        if LANGUAGE_MARKER not in template:
+            fail(findings, f"missing-template-language-marker: {rel_path}")
 
     cold_start = (skill_root / "references" / "cold-start-side-projects.md").read_text(encoding="utf-8")
     for required in ["lightweight cold-start side projects", "Lightweight Council", "Completion Standard"]:

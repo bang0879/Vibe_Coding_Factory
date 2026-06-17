@@ -6,6 +6,10 @@ Use Reporting Sync whenever Codex reports progress to the user while the Factory
 
 The user-facing report and `.factory/factory-state.json` must describe the same reality. Update state first, then report.
 
+## User-Facing Language
+
+Use Korean by default for user-facing decision prompts, progress reports, planning artifacts, monitor summaries, blocker reports, and completion reports. Internal agent-to-agent messages, Caveman handoffs, machine ids, JSON keys, event types, commands, file paths, and code identifiers may stay English.
+
 ## Required Before User Report
 
 Before sending any progress, decision, blocker, or completion report:
@@ -75,7 +79,20 @@ Monitor status values:
 
 ## Report Rules
 
-When a decision is needed, report:
+When a decision is needed, report in Korean by default:
+
+```text
+결정 필요: <한 줄 결정 질문>
+추천: <추천 옵션>
+이유: <짧은 이유>
+선택지: A / B / C
+결정 요약: <질문, 추천 옵션, 선택 결과>
+모니터: <decision id, latest event id, monitor status>
+모니터 보기: <served monitor URL or .factory/factory-dashboard.html>
+자동 진행: <사용자 답변 없이 계속 가능한 작업>
+```
+
+English fallback if the runtime cannot render Korean labels:
 
 ```text
 Decision needed: <one-line decision>
@@ -90,7 +107,15 @@ Proceeding automatically: <what will continue without user input>
 
 Before this report, `report_sync.last_prompt_requires_user` must be `true`, `latest_decision_summary` must summarize the choice, `user_waiting_summary` must match the user-facing request, and `monitor_view` must point to the dashboard.
 
-When no decision is needed, report:
+When no decision is needed, report in Korean by default:
+
+```text
+자동 진행: <진행 중인 작업>
+모니터: <업데이트된 내용, latest event id, monitor status>
+다음 결정 지점: <다음 승인 지점 또는 없음>
+```
+
+English fallback:
 
 ```text
 Proceeding automatically: <what is happening>

@@ -1,5 +1,7 @@
 # Moat Strategy
 
+> Language: Korean by default for user-facing content. Keep ids, commands, JSON keys, and file paths in English.
+
 ## Positioning
 
 -

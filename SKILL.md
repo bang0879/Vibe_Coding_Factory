@@ -50,6 +50,14 @@ Set `report_sync.last_prompt_requires_user` to `true`, fill `latest_decision_sum
 
 Do not ask the user to decide from chat alone. If monitor opening fails, say that the monitor open failed and provide the exact `Monitor view` path or URL.
 
+## User-Facing Korean Output Rule
+
+Write user-facing decision prompts, Decision Briefs, Direction Lock summaries, PRDs, GTM docs, design briefs, task roadmaps, implementation plans, QA summaries, monitor summaries, blocker reports, and completion reports in Korean by default unless the user asks for another language.
+
+Internal agent-to-agent messages, Caveman handoffs, machine ids, event types, JSON keys, CLI output, commands, file paths, and code identifiers may stay English.
+
+If a template has English headings, keep machine-readable labels and ids stable, but write explanations, choices, consequences, recommendations, and plan details in Korean.
+
 ## Core Flow
 
 1. Capture the user's project idea, purpose, target user, and success criteria.
@@ -134,6 +142,7 @@ Load only what is needed:
 ## Operating Rules
 
 - The user-facing language is Korean unless the user requests otherwise.
+- User-facing decision prompts and planning artifacts follow the User-Facing Korean Output Rule.
 - Agent-to-agent reports use Caveman format.
 - This skill's default niche is lightweight cold-start side projects, not heavyweight enterprise SDLC replacement.
 - `factory_preflight.py` must pass before app/product implementation starts.
@@ -173,7 +182,7 @@ Load only what is needed:
 - Discovery Council must include Product Strategist, Technical Feasibility Architect, Growth and Moat Strategist, UX Strategist when user-facing, Risk Critic, and Planner reports before Direction Lock approval.
 - Direction Lock must include target user, user job, MVP scope, non-goals, technical approach, moat hypothesis, accepted risks, and source decision ids.
 - Consensus Planning must include Planner, Architect, and Critic verdicts before planning approval.
-- Separate user-facing reports into `Decision needed` and `Proceeding automatically`.
+- Separate user-facing reports into Korean `결정 필요` and `자동 진행` sections.
 - Keep decision requests short: one decision, the options, the recommended option, and the consequence.
 - Record every user decision in `.factory/factory-state.json` under `decisions`.
 - Show decision records in the monitor and create a message from Orchestrator to the next agent that uses the decision.
@@ -263,7 +272,9 @@ Use this shape when the user must decide:
 추천: <option>
 이유: <one short reason>
 선택지: A / B / C
+결정 요약: <question, recommended option, and consequences>
 모니터: <decision id, latest event id, and monitor status>
+모니터 보기: <served monitor URL or .factory/factory-dashboard.html>
 자동 진행: <what will continue without user input>
 ```
 
@@ -277,7 +288,7 @@ Use this shape when no decision is needed:
 
 Avoid long background explanations unless the user asks.
 
-Canonical report format:
+English fallback format for runtimes that cannot render Korean labels correctly:
 
 ```text
 Decision needed: <one-line decision>
@@ -296,7 +307,7 @@ Monitor: <what was updated, latest event id, and monitor status>
 Next decision: <next expected approval or none>
 ```
 
-Use the canonical format above if older labels render incorrectly.
+Use the English fallback only if Korean labels render incorrectly.
 
 ## Completion Report
 

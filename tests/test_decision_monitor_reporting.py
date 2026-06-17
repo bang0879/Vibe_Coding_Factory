@@ -69,7 +69,8 @@ class DecisionMonitorReportingTests(unittest.TestCase):
             report_sync = state["report_sync"]
             self.assertTrue(report_sync["last_prompt_requires_user"])
             self.assertIn("방향을 A로 잠글까요?", report_sync["latest_decision_summary"])
-            self.assertIn("Decision needed", report_sync["user_waiting_summary"])
+            self.assertIn("결정 필요", report_sync["user_waiting_summary"])
+            self.assertIn("모니터 보기", report_sync["user_waiting_summary"])
             self.assertTrue(report_sync["monitor_view"])
 
     def test_verify_fails_when_user_waits_without_monitor_summary(self) -> None:
