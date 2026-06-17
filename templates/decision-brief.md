@@ -69,6 +69,14 @@
 - Why choose:
 - Why not:
 
+## Candidate Capabilities
+
+List domain-native high-quality capabilities the user may not have explicitly named.
+
+| Capability | Why it matters | Requires | Feasibility | Fallback | Needs approval |
+| --- | --- | --- | --- | --- | --- |
+|  |  |  |  |  |  |
+
 ## Recommendation
 
 - Recommended option:

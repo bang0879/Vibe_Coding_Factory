@@ -70,6 +70,16 @@ Before implementation, Design Studio must produce implementation-ready design co
 
 During QA, compare the rendered app against the approved design brief. If the layout has collapsed, hierarchy is unclear, controls look browser-default, or the first screen no longer communicates the product, mark UX or Consumer Appeal as failed.
 
+The Design Fidelity Lock requires:
+
+- A layout fingerprint precise enough to compare against the rendered first screen.
+- A component count floor and must-keep component list.
+- Visual token preservation for background, surface, border, text, accent, radius, shadow, and density.
+- A forbidden-degradations list.
+- Browser or screenshot evidence in `docs/QA_EVIDENCE.md`.
+
+If the shipped UI is materially cheaper, flatter, more generic, or less structured than the approved concept, mark the task `reopened`; do not call it a style preference.
+
 ## Implementation Depth Gate
 
 Task Decomposer must avoid ending with a shell-only task. For a new app, create task cards that cover:

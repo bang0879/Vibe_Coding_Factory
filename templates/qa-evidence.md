@@ -44,6 +44,11 @@
 - Component inventory:
 - Primary actions:
 - Required states:
+- Layout fingerprint match:
+- Must-keep components present:
+- Visual tokens preserved:
+- Forbidden degradations absent:
+- Screenshot or browser evidence:
 - Mobile:
 - Desktop:
 

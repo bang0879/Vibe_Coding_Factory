@@ -63,6 +63,22 @@ APP_SUFFIXES = {".html", ".htm", ".jsx", ".tsx", ".vue", ".svelte"}
 IGNORED_APP_SCAN_DIRS = {".git", ".factory", "node_modules", "__pycache__", ".next", "dist", "build"}
 APPROVED_LOCK_STATUSES = {"approved", "locked", "skipped_by_user"}
 CAPABILITY_MODES = {"live", "user_data", "local_functional", "partial"}
+REQUIRED_DESIGN_INVARIANT_KEYS = (
+    "first_screen_zones",
+    "primary_actions",
+    "component_inventory",
+    "state_inventory",
+    "responsive_rules",
+    "do_not_degrade",
+    "fidelity_contract",
+)
+REQUIRED_FIDELITY_KEYS = (
+    "layout_fingerprint",
+    "must_keep_components",
+    "visual_quality_floor",
+    "forbidden_degradations",
+    "screenshot_or_browser_evidence_required",
+)
 OUT_OF_SEED_MARKERS = (
     "out-of-seed",
     "out_of_seed",
@@ -433,6 +449,22 @@ def check_acceptance_contract(project_root: Path, collector: Collector) -> dict[
             "contract-out-of-seed-scenario",
             "open-ended input requires at least one out-of-seed or unlisted-input primary scenario",
         )
+
+    design_invariants = contract.get("design_invariants")
+    if isinstance(design_invariants, dict):
+        for key in REQUIRED_DESIGN_INVARIANT_KEYS:
+            if design_invariants.get(key) in ("", None, [], {}):
+                collector.fail("contract-design-invariant", f"design_invariants.{key} must be filled")
+        fidelity = design_invariants.get("fidelity_contract")
+        if not isinstance(fidelity, dict):
+            collector.fail("contract-design-fidelity", "design_invariants.fidelity_contract must be an object")
+        else:
+            for key in REQUIRED_FIDELITY_KEYS:
+                value = fidelity.get(key)
+                if value in ("", None, [], {}):
+                    collector.fail("contract-design-fidelity", f"fidelity_contract.{key} must be filled")
+            if fidelity.get("screenshot_or_browser_evidence_required") is not True:
+                collector.fail("contract-design-fidelity-evidence", "fidelity_contract must require screenshot or browser evidence")
 
     verification = contract.get("verification", {})
     entrypoint = verification.get("real_entrypoint") if isinstance(verification, dict) else ""

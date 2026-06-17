@@ -65,8 +65,10 @@ After implementation, compare the rendered app to `docs/DESIGN_BRIEF.md`:
 - Same density/spacing intent.
 - Same responsive collapse behavior.
 - Required states are present: empty, loading when relevant, selected, disabled, error/blocked, success.
+- Same design fidelity contract: layout fingerprint, must-keep components, visual quality floor, and forbidden degradations.
+- Browser or screenshot evidence exists for desktop and mobile when UI is part of the product.
 
-If the implementation diverges from the approved concept, mark UX failed and reopen the design or implementation task. Do not report the app as complete.
+If the implementation diverges from the approved concept, mark UX failed and reopen the design or implementation task. Do not report the app as complete. Do not dismiss a visibly cheaper, flatter, generic, or browser-default result as a style preference.
 
 ## Completion Contract
 
@@ -80,6 +82,7 @@ The factory may mark a user-facing app task `done` only when all are true:
 - Capability mode, input freedom, and approved fallbacks in `capability_contract` match the implemented UI and behavior.
 - Open-ended inputs are not narrowed to a closed dropdown unless explicitly approved.
 - Design parity passes against the approved brief.
+- Design fidelity evidence proves the rendered UI preserves the approved concept.
 - QA evidence records URL, actions, before/after outputs, files checked, commands run, and remaining risks.
 - UX and Consumer Appeal pass without "rough scaffold", "toy data", or "generic template" findings.
 - `scripts/verify_factory_run.py` passes for the active project.

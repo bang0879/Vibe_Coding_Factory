@@ -81,6 +81,18 @@ These must be copied into `docs/ACCEPTANCE_CONTRACT.json` when relevant.
 - Responsive rules:
 - Do-not-degrade checklist:
 
+## Design Fidelity Contract
+
+These must be specific enough that Engineer cannot collapse the concept into a generic template.
+
+- Approved design artifacts:
+- Layout fingerprint:
+- Component count floor:
+- Must-keep components:
+- Visual quality floor:
+- Forbidden degradations:
+- Screenshot or browser evidence required:
+
 ## Implementation Notes
 
 - Allowed deviations:

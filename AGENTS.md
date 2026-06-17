@@ -36,6 +36,8 @@ python scripts/ensure_factory_monitor.py --project-root . --open
 - Do not ask the user for approval or selection without surfacing `Monitor view` and a short decision summary.
 - Do not treat dashboard HTML as a working app.
 - Do not silently downgrade live/API/open-ended product intent into a fixed seed-data demo, canned result, or tiny closed dropdown. Ask the user and record the fallback in `docs/ACCEPTANCE_CONTRACT.json`.
+- During discovery, propose domain-native capabilities such as map/place search for location products, calendar sync for scheduling products, and data-source/ranking choices for recommendation products.
+- Do not ship a UI that is materially cheaper or more generic than the approved design concept. Record design fidelity evidence before completion.
 - Do not claim benchmark superiority from `scripts/benchmark_factory_skill.py`; it is a local self-audit only.
 - If your runtime has no sub-agents, run each role serially and write separate council reports.
 

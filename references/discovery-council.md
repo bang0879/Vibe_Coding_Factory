@@ -18,6 +18,7 @@ Report:
 - MVP scope candidates.
 - Non-goals and scope traps.
 - Success metrics.
+- Domain-native capabilities the user may not have named but the product likely needs.
 
 ### Technical Feasibility Architect
 
@@ -28,6 +29,7 @@ Report:
 - Workarounds and degraded modes.
 - Stack and integration constraints.
 - Data/API requirements.
+- API/live-data requirements for candidate capabilities and the cost of deferring them.
 - Security and privacy constraints.
 - Estimated implementation difficulty.
 
@@ -128,6 +130,21 @@ Each option:
 ```
 
 Use 2-3 options unless the direction is already clearly chosen.
+
+## Domain Affordance Check
+
+Before Direction Lock, add `candidate_capabilities[]` for natural high-quality features inferred from the domain. For example, place-based apps should propose map/place autocomplete, geocoding, radius filters, and provider constraints even if the user only said "location" or "venue".
+
+Each candidate must include:
+
+- Capability.
+- User value.
+- Required integration or data.
+- Feasibility.
+- Fallback.
+- Whether user approval is required.
+
+If a candidate is central to product quality, the Decision Brief must ask the user to choose live/API, API-ready, user-data, local functional demo, or partial delivery. Do not silently omit the candidate to keep the MVP easy.
 
 ## Direction Lock Gate
 

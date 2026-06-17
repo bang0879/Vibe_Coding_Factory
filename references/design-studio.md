@@ -99,10 +99,11 @@ Design Studio must produce design parity anchors that can be checked after imple
 - Spacing/density rules.
 - Visual token summary.
 - Concrete "implementation must still look like this" notes.
+- Design fidelity contract: approved artifacts, layout fingerprint, component count floor, must-keep components, visual quality floor, forbidden degradations, and screenshot/browser evidence requirement.
 
 For complete product requests, copy these anchors into `docs/ACCEPTANCE_CONTRACT.json` under `design_invariants`. The Engineer and UX Checker must treat those invariants as a contract, not inspiration.
 
-After implementation, UX Checker must compare the rendered app against these anchors. If the output looks like a different design, the concept is not implemented and the task fails.
+After implementation, UX Checker must compare the rendered app against these anchors with browser evidence or screenshots. If the output looks like a different design, generic template, browser-default form, or visibly cheaper version of the approved concept, the concept is not implemented and the task fails.
 
 UX Checker must record design parity evidence in `docs/QA_EVIDENCE.md` before a user-facing task can be marked `done`.
 

@@ -19,6 +19,8 @@ Keep these rules the same across runtimes:
 - Prefer `scripts/ensure_factory_monitor.py --project-root . --open` before every user-wait prompt.
 - Write user-facing decisions, planning artifacts, monitor summaries, blocker reports, and completion reports in Korean by default. Internal agent handoffs, ids, commands, paths, event types, and JSON keys may stay English.
 - Do not silently downgrade live/API/open-ended product intent into fixed seed data, canned results, or tiny closed dropdowns. Record `capability_contract` and approved fallbacks in `docs/ACCEPTANCE_CONTRACT.json`.
+- During discovery, propose domain-native capabilities before Direction Lock.
+- Preserve approved design concepts through `design_invariants.fidelity_contract` and browser/screenshot evidence.
 
 ## Runtime Adapters
 

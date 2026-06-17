@@ -68,6 +68,25 @@ Preserve approved input freedom. If the Direction Lock or requirements say the u
 
 Record the chosen capability mode and any approved fallback in `docs/ACCEPTANCE_CONTRACT.json` under `capability_contract`, then verify at least one out-of-seed or unlisted-input scenario before claiming completion.
 
+## Domain Affordance Discovery Rule
+
+Do not wait for the user to spell out every high-quality product capability. During Discovery Council, infer the natural affordances of the domain and report them as options before Direction Lock.
+
+Examples:
+
+- Meal, dinner, venue, travel, local recommendation, or place-based apps should consider map/place search, autocomplete, geocoding, radius filters, transit distance, building-level matching, and Naver/Kakao/Google Maps API constraints.
+- Scheduling, meeting, reminder, or itinerary apps should consider calendar sync, conflict checks, time zones, notifications, and import/export.
+- Commerce, booking, payment, or marketplace apps should consider inventory, booking state, payment provider, cancellation policy, and trust/safety.
+- Search, recommendation, briefing, or research apps should consider data source, ranking model, freshness, citation/source display, and fallback policy.
+
+Report these affordances as `candidate_capabilities[]`: each item must include user value, required integration or data, feasibility, fallback option, and whether the user must approve it. Do not implement an inferred capability until the user approves it, but do not omit the proposal when it is central to product quality.
+
+## Design Fidelity Lock Rule
+
+An approved design concept is a contract, not inspiration. Before implementation, Design Studio must convert the approved concept into concrete design fidelity anchors: first-screen layout, component inventory, visual tokens, spacing/density, responsive behavior, required states, and forbidden degradations.
+
+Engineer must implement against those anchors. UX Checker must compare the rendered app against the anchors using browser evidence or screenshots. If the result looks like a generic template, browser-default form, unrelated layout, collapsed hierarchy, or visibly cheaper version of the approved concept, mark UX or Consumer Appeal failed and reopen the task.
+
 ## Core Flow
 
 1. Capture the user's project idea, purpose, target user, and success criteria.
@@ -83,6 +102,7 @@ Record the chosen capability mode and any approved fallback in `docs/ACCEPTANCE_
    - UX Strategist reports first-use flow, product feel, information architecture, and experience risks.
    - Risk Critic reports legal, privacy, security, operational, and execution risks.
    - Planner reports viable paths, sequencing, dependencies, and implementation risk.
+   - Report domain affordances and high-quality capability options before asking for Direction Lock.
    - Store reports in `council_reports[]` and summarize options in `option_matrix[]`.
 5. Produce `docs/DECISION_BRIEF.md` and ask for user direction when product direction is not locked:
    - Present 2-3 concrete direction options.
@@ -145,6 +165,7 @@ Load only what is needed:
 - For real app depth, option breadth, design durability, and app QA gates, read `references/product-quality.md` before decomposing or implementing any user-facing app.
 - For complete product delivery, read `references/completion-harness.md` before task decomposition and again before marking any user-facing app task `done`.
 - For executable product contracts, deterministic completion checks, and fresh-review gates, read `references/factory-harness.md` before implementation and before final completion.
+- For domain-native high-quality capability options, read `references/domain-affordances.md` during Discovery Council before Direction Lock.
 - For runtime portability across Codex, Claude Code, and generic coding agents, read `references/runtime-portability.md`.
 - For local self-audit scoring, read `references/benchmark-rubric.md` and run `scripts/benchmark_factory_skill.py`.
 - For lightweight cold-start side-project fit, read `references/cold-start-side-projects.md`.
@@ -154,6 +175,8 @@ Load only what is needed:
 - The user-facing language is Korean unless the user requests otherwise.
 - User-facing decision prompts and planning artifacts follow the User-Facing Korean Output Rule.
 - Real app delivery follows the No Silent Capability Downgrade Rule.
+- Discovery follows the Domain Affordance Discovery Rule.
+- UI implementation follows the Design Fidelity Lock Rule.
 - Agent-to-agent reports use Caveman format.
 - This skill's default niche is lightweight cold-start side projects, not heavyweight enterprise SDLC replacement.
 - `factory_preflight.py` must pass before app/product implementation starts.
@@ -181,6 +204,7 @@ Load only what is needed:
 - For interactive apps, the executable harness is necessary but not sufficient: QA must record browser evidence for two contrasting input/state changes and one edge state when relevant.
 - Before final completion of a user-facing product, use a fresh-context review pass against the diff, acceptance contract, design brief, and QA evidence. Requirement-level gaps reopen the task.
 - If the approved design concept cannot be recognized in the rendered app, mark UX failed and reopen the task. Do not ask the user to catch basic design drift.
+- Do not accept a final UI that is materially cheaper, flatter, more generic, or less structured than the approved design concept.
 - When factory execution starts, create or update `.factory/factory-state.json` and `.factory/factory-log.md`.
 - When the user wants a visual monitor, copy or create `.factory/factory-dashboard.html` from `templates/factory-dashboard.html`.
 - Before opening or reporting a monitor URL, apply the Stale Monitor Guard in `references/factory-monitor.md`: verify the active project root, refresh the dashboard from the current template, record monitor metadata, and do not treat a `?v=` cache-bust URL as proof that the served file is current.

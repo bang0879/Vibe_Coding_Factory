@@ -39,6 +39,7 @@
   },
   "council_reports": [],
   "option_matrix": [],
+  "candidate_capabilities": [],
   "direction_lock": {
     "status": "idle",
     "path": "docs/DIRECTION_LOCK.md",

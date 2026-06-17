@@ -52,7 +52,7 @@ def base_contract() -> dict:
                 "status": "pending",
             }
         ],
-        "design_invariants": {},
+        "design_invariants": valid_design_invariants(),
         "data_breadth": {"minimum_items": 12, "minimum_examples": 0, "rationale": "recommendation app"},
         "verification": {"real_entrypoint": "", "commands": []},
         "completion_status": {"overall": "pending"},
@@ -83,6 +83,32 @@ def valid_capability_contract() -> dict:
             "must_label_sample_mode": True,
             "replacement_path": "app/data.js",
             "minimum_realistic_items_is_floor_not_ceiling": True,
+        },
+    }
+
+
+def valid_design_invariants() -> dict:
+    return {
+        "first_screen_zones": ["search panel", "recommendation results", "summary report"],
+        "primary_actions": ["search", "select venue", "generate notice"],
+        "component_inventory": ["free text location input", "filter chips", "venue card", "report panel"],
+        "state_inventory": ["empty", "selected", "success", "error"],
+        "responsive_rules": ["results stack below filters on mobile"],
+        "visual_tokens": {
+            "background": "#f7f8fb",
+            "surface": "#ffffff",
+            "accent": "#2563eb",
+            "radius": "8px",
+        },
+        "do_not_degrade": ["do not collapse into a generic card grid"],
+        "fidelity_contract": {
+            "approved_design_artifacts": ["docs/DESIGN_BRIEF.md"],
+            "layout_fingerprint": "left filters, right ranked results, bottom report panel",
+            "component_count_floor": 4,
+            "must_keep_components": ["free text location input", "venue cards", "report panel"],
+            "visual_quality_floor": "polished operational dashboard, not browser-default form",
+            "forbidden_degradations": ["generic card grid", "browser-default form"],
+            "screenshot_or_browser_evidence_required": True,
         },
     }
 
@@ -120,6 +146,32 @@ class CapabilityRealismTests(unittest.TestCase):
         self.assertIn("input_freedom", template["capability_contract"])
         self.assertIn("forbidden_downgrades", template["capability_contract"])
         self.assertTrue(any(item["id"] == "SCN-OUT-OF-SEED" for item in template["primary_scenarios"]))
+        self.assertIn("fidelity_contract", template["design_invariants"])
+
+    def test_verify_fails_when_design_fidelity_contract_is_empty(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            project = Path(tmp)
+            write_minimal_state(project)
+            contract = base_contract()
+            contract["capability_contract"] = valid_capability_contract()
+            contract["design_invariants"] = {"fidelity_contract": {}}
+            contract["primary_scenarios"].append(
+                {
+                    "id": "SCN-OUT-OF-SEED",
+                    "requirement_ids": ["REQ-001"],
+                    "given": "out-of-seed location outside preset chips",
+                    "when": "the user enters it",
+                    "then": "the app handles it honestly",
+                    "evidence": "browser evidence",
+                    "status": "pending",
+                }
+            )
+            self.write_contract(project, contract)
+
+            result = run_verify(project)
+
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("contract-design-fidelity", result.stdout)
 
     def test_verify_fails_without_capability_contract(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

@@ -68,7 +68,20 @@
     "state_inventory": ["empty", "selected", "success", "error"],
     "responsive_rules": [],
     "visual_tokens": {},
-    "do_not_degrade": []
+    "do_not_degrade": [],
+    "fidelity_contract": {
+      "approved_design_artifacts": [],
+      "layout_fingerprint": "",
+      "component_count_floor": 0,
+      "must_keep_components": [],
+      "visual_quality_floor": "",
+      "forbidden_degradations": [
+        "Do not collapse the approved concept into a generic card grid.",
+        "Do not replace designed controls with browser-default forms when the brief specifies styled controls.",
+        "Do not remove first-screen hierarchy, density, or primary action emphasis."
+      ],
+      "screenshot_or_browser_evidence_required": true
+    }
   },
   "data_breadth": {
     "minimum_items": 0,

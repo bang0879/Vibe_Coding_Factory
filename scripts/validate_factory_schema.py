@@ -14,6 +14,7 @@ REQUIRED_TOP_LEVEL = [
     "discovery",
     "council_reports",
     "option_matrix",
+    "candidate_capabilities",
     "direction_lock",
     "approval_queue",
     "plan",
@@ -62,6 +63,7 @@ REQUIRED_FILES = [
     "agents/openai.yaml",
     "adapters/claude-code/CLAUDE.md",
     "references/discovery-council.md",
+    "references/domain-affordances.md",
     "references/reporting-sync.md",
     "references/runtime-portability.md",
     "references/cold-start-side-projects.md",
@@ -78,6 +80,7 @@ REQUIRED_FILES = [
     "tests/test_benchmark_integrity.py",
     "tests/test_capability_realism.py",
     "tests/test_decision_monitor_reporting.py",
+    "tests/test_domain_affordance_design_fidelity.py",
     "tests/test_korean_user_outputs.py",
     "tests/test_monitor_opening.py",
     "tests/test_preflight_guard.py",
@@ -223,6 +226,16 @@ def check_text(skill_root: Path, findings: list[str]) -> None:
         if required not in planning:
             fail(findings, f"missing-planning-text: {required}")
 
+    discovery = (skill_root / "references" / "discovery-council.md").read_text(encoding="utf-8")
+    for required in ["Domain Affordance Check", "candidate_capabilities[]", "map/place autocomplete"]:
+        if required not in discovery:
+            fail(findings, f"missing-discovery-affordance-text: {required}")
+
+    affordances = (skill_root / "references" / "domain-affordances.md").read_text(encoding="utf-8")
+    for required in ["회식", "지도/장소 자동완성", "Naver/Kakao/Google Maps API", "candidate_capabilities[]"]:
+        if required not in affordances:
+            fail(findings, f"missing-domain-affordance-text: {required}")
+
     monitor = (skill_root / "references" / "factory-monitor.md").read_text(encoding="utf-8")
     for required in ["council_reports", "option_matrix", "direction_lock", "report_sync", "User-Wait Display"]:
         if required not in monitor:
@@ -261,14 +274,19 @@ def check_text(skill_root: Path, findings: list[str]) -> None:
             fail(findings, f"missing-acceptance-contract-text: {required}")
 
     product_quality = (skill_root / "references" / "product-quality.md").read_text(encoding="utf-8")
-    for required in ["Capability Realism Gate", "out-of-seed", "Minimum data breadth is a floor", "Closed dropdowns"]:
+    for required in ["Capability Realism Gate", "Design Fidelity Lock", "out-of-seed", "Minimum data breadth is a floor", "Closed dropdowns"]:
         if required not in product_quality:
             fail(findings, f"missing-product-quality-text: {required}")
 
     verifier = (skill_root / "scripts" / "verify_factory_run.py").read_text(encoding="utf-8")
-    for required in ["contract-capability-missing", "contract-out-of-seed-scenario", "contract-live-fallback-unapproved"]:
+    for required in ["contract-capability-missing", "contract-out-of-seed-scenario", "contract-live-fallback-unapproved", "contract-design-fidelity"]:
         if required not in verifier:
             fail(findings, f"missing-verifier-capability-text: {required}")
+
+    design_brief = (skill_root / "templates" / "design-brief.md").read_text(encoding="utf-8")
+    for required in ["Design Fidelity Contract", "Layout fingerprint", "Forbidden degradations"]:
+        if required not in design_brief:
+            fail(findings, f"missing-design-brief-fidelity-text: {required}")
 
     cold_start = (skill_root / "references" / "cold-start-side-projects.md").read_text(encoding="utf-8")
     for required in ["lightweight cold-start side projects", "Lightweight Council", "Completion Standard"]:
