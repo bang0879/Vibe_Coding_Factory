@@ -43,7 +43,8 @@ python scripts/verify_factory_run.py --project-root . --mode all
 11. Write user-facing decision prompts, planning artifacts, monitor summaries, blocker reports, and completion reports in Korean by default. Internal handoffs, ids, commands, paths, and JSON keys may stay English.
 12. Do not silently downgrade live/API/open-ended product intent into a fixed seed-data demo, canned result, or tiny closed dropdown. Ask the user and record the fallback in `docs/ACCEPTANCE_CONTRACT.json`.
 13. During discovery, propose domain-native capabilities before Direction Lock; for location products, include map/place search and provider constraints.
-14. Preserve the approved design concept with a design fidelity contract and browser/screenshot evidence before completion.
+14. For team dinner, restaurant, venue, map/place search, or booking agents, read `references/venue-agent-playbook.md`; propose live/API-ready provider integrations, sourced reports, booking mode, user confirmation, and confirmation proof before Direction Lock.
+15. Preserve the approved design concept with a design fidelity contract and browser/screenshot evidence before completion.
 
 ## Claude Code Notes
 

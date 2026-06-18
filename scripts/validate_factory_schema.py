@@ -64,6 +64,7 @@ REQUIRED_FILES = [
     "adapters/claude-code/CLAUDE.md",
     "references/discovery-council.md",
     "references/domain-affordances.md",
+    "references/venue-agent-playbook.md",
     "references/reporting-sync.md",
     "references/runtime-portability.md",
     "references/cold-start-side-projects.md",
@@ -85,6 +86,7 @@ REQUIRED_FILES = [
     "tests/test_monitor_opening.py",
     "tests/test_preflight_guard.py",
     "tests/test_runtime_portability.py",
+    "tests/test_venue_agent_playbook.py",
 ]
 
 REQUIRED_DASHBOARD_TEXT = [
@@ -220,6 +222,9 @@ def check_text(skill_root: Path, findings: list[str]) -> None:
     for required in REQUIRED_SKILL_TEXT:
         if required not in skill_text:
             fail(findings, f"missing-skill-text: {required}")
+    for required in ["Venue And Reservation Agent Rule", "venue-agent-playbook.md"]:
+        if required not in skill_text:
+            fail(findings, f"missing-skill-venue-text: {required}")
 
     planning = (skill_root / "references" / "planning-intake.md").read_text(encoding="utf-8")
     for required in ["Idea Snapshot", "Discovery Council", "Option Matrix", "Direction Lock"]:
@@ -235,6 +240,15 @@ def check_text(skill_root: Path, findings: list[str]) -> None:
     for required in ["회식", "지도/장소 자동완성", "Naver/Kakao/Google Maps API", "candidate_capabilities[]"]:
         if required not in affordances:
             fail(findings, f"missing-domain-affordance-text: {required}")
+
+    for required in ["Venue And Reservation Agent Shortcut", "booking_mode", "CatchTable", "Final user confirmation"]:
+        if required not in affordances:
+            fail(findings, f"missing-domain-venue-text: {required}")
+
+    venue_playbook = (skill_root / "references" / "venue-agent-playbook.md").read_text(encoding="utf-8")
+    for required in ["Kakao Local API", "Naver Local Search API", "CatchTable", "booking_mode", "confirmation proof", "Do not invent ratings"]:
+        if required not in venue_playbook:
+            fail(findings, f"missing-venue-playbook-text: {required}")
 
     monitor = (skill_root / "references" / "factory-monitor.md").read_text(encoding="utf-8")
     for required in ["council_reports", "option_matrix", "direction_lock", "report_sync", "User-Wait Display", "embedded_state_snapshot", "decision history", "agent_steps"]:
@@ -269,7 +283,7 @@ def check_text(skill_root: Path, findings: list[str]) -> None:
             fail(findings, f"missing-template-language-marker: {rel_path}")
 
     acceptance_contract = (skill_root / "templates" / "acceptance-contract.json").read_text(encoding="utf-8")
-    for required in ["capability_contract", "input_freedom", "forbidden_downgrades", "SCN-OUT-OF-SEED", "minimum_realistic_items_is_floor_not_ceiling"]:
+    for required in ["capability_contract", "integration_contract", "booking_mode", "input_freedom", "forbidden_downgrades", "SCN-OUT-OF-SEED", "minimum_realistic_items_is_floor_not_ceiling"]:
         if required not in acceptance_contract:
             fail(findings, f"missing-acceptance-contract-text: {required}")
 
@@ -279,7 +293,7 @@ def check_text(skill_root: Path, findings: list[str]) -> None:
             fail(findings, f"missing-product-quality-text: {required}")
 
     verifier = (skill_root / "scripts" / "verify_factory_run.py").read_text(encoding="utf-8")
-    for required in ["contract-capability-missing", "contract-out-of-seed-scenario", "contract-live-fallback-unapproved", "contract-design-fidelity"]:
+    for required in ["contract-capability-missing", "contract-out-of-seed-scenario", "contract-live-fallback-unapproved", "contract-design-fidelity", "contract-integration-missing", "contract-provider-docs-missing", "contract-booking-mode", "contract-booking-completion-proof"]:
         if required not in verifier:
             fail(findings, f"missing-verifier-capability-text: {required}")
 

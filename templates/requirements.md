@@ -11,7 +11,7 @@
 
 ## Capability Contract
 
-- Capability mode: `live` / `user_data` / `local_functional` / `partial`
+- Capability mode: `live` / `api_ready` / `user_data` / `local_functional` / `partial`
 - Requires live data or API:
 - External dependencies:
 - Approved fallbacks:
@@ -19,6 +19,21 @@
 - Open-ended input fields:
 - Closed-set fields explicitly approved:
 - Sample data label and replacement path:
+
+## Integration Contract
+
+Use this section when the product promise depends on maps, search, booking, payments, calendars, messages, or another outside provider.
+
+- Provider candidates:
+- Required live integrations:
+- Official docs checked:
+- Auth env vars, with secret values omitted:
+- Rate limit policy:
+- Cache policy:
+- Terms or ToS constraints:
+- Booking mode: `official_api` / `provider_deeplink` / `browser_assisted` / `manual_call` / `unavailable` / `not_applicable`
+- Final user confirmation required before external action:
+- Completion proof required:
 
 ## Requirements
 

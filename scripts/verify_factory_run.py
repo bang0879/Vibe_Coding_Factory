@@ -62,7 +62,16 @@ APP_DIRS = {"app", "src", "components", "pages", "views", "routes"}
 APP_SUFFIXES = {".html", ".htm", ".jsx", ".tsx", ".vue", ".svelte"}
 IGNORED_APP_SCAN_DIRS = {".git", ".factory", "node_modules", "__pycache__", ".next", "dist", "build"}
 APPROVED_LOCK_STATUSES = {"approved", "locked", "skipped_by_user"}
-CAPABILITY_MODES = {"live", "user_data", "local_functional", "partial"}
+CAPABILITY_MODES = {"live", "api_ready", "user_data", "local_functional", "partial"}
+BOOKING_MODES = {
+    "official_api",
+    "provider_deeplink",
+    "browser_assisted",
+    "manual_call",
+    "unavailable",
+    "not_applicable",
+}
+BOOKING_ACTION_MODES = {"official_api", "provider_deeplink", "browser_assisted", "manual_call"}
 REQUIRED_DESIGN_INVARIANT_KEYS = (
     "first_screen_zones",
     "primary_actions",
@@ -395,6 +404,88 @@ def check_user_wait_monitor_report(project_root: Path, state: dict[str, Any], co
         collector.fail("user-wait-monitor-stale", f"user wait monitor_status must be current or state_only; got {monitor_status or 'empty'}")
 
 
+def check_integration_contract(
+    contract: dict[str, Any],
+    capability: dict[str, Any] | None,
+    collector: Collector,
+) -> None:
+    integration = contract.get("integration_contract")
+    requires_integration = False
+    if isinstance(capability, dict):
+        requires_integration = (
+            capability.get("requires_live_data_or_api") is True
+            or bool(as_list(capability.get("external_dependencies")))
+        )
+
+    if integration is None:
+        if requires_integration:
+            collector.fail(
+                "contract-integration-missing",
+                "live/API or external provider capability requires integration_contract",
+            )
+        return
+
+    if not isinstance(integration, dict):
+        collector.fail("contract-integration-shape", "integration_contract must be an object")
+        return
+
+    required_fields = (
+        "provider_candidates",
+        "required_live_integrations",
+        "provider_docs_checked",
+        "auth_env_vars",
+        "rate_limit_policy",
+        "cache_policy",
+        "terms_or_tos_constraints",
+        "booking_mode",
+        "requires_final_user_confirmation",
+        "completion_proof",
+    )
+    for key in required_fields:
+        if key not in integration:
+            collector.fail("contract-integration-field", f"integration_contract.{key} is missing")
+
+    provider_candidates = as_list(integration.get("provider_candidates"))
+    required_live = as_list(integration.get("required_live_integrations"))
+    docs_checked = as_list(integration.get("provider_docs_checked"))
+    auth_env_vars = as_list(integration.get("auth_env_vars"))
+    terms = as_list(integration.get("terms_or_tos_constraints"))
+    booking_mode = str(integration.get("booking_mode", "")).strip().lower()
+
+    if booking_mode not in BOOKING_MODES:
+        collector.fail("contract-booking-mode", f"integration_contract.booking_mode must be one of {sorted(BOOKING_MODES)}")
+
+    if (requires_integration or booking_mode in BOOKING_ACTION_MODES) and not provider_candidates:
+        collector.fail("contract-provider-candidates", "external integration or booking flow requires provider_candidates")
+
+    if (requires_integration or required_live or booking_mode in {"official_api", "provider_deeplink", "browser_assisted"}) and not docs_checked:
+        collector.fail("contract-provider-docs-missing", "external integration requires provider_docs_checked")
+
+    if required_live and not auth_env_vars:
+        collector.fail("contract-provider-auth-missing", "required_live_integrations requires auth_env_vars or an explicit no-auth note")
+
+    if (requires_integration or required_live or booking_mode in BOOKING_ACTION_MODES) and not terms:
+        collector.fail("contract-provider-terms-missing", "external integration or booking flow requires terms_or_tos_constraints")
+
+    if booking_mode in BOOKING_ACTION_MODES and integration.get("requires_final_user_confirmation") is not True:
+        collector.fail(
+            "contract-booking-user-confirmation",
+            "booking-capable flows must require final user confirmation before external action",
+        )
+
+    completion = contract.get("completion_status", {})
+    overall = completion.get("overall") if isinstance(completion, dict) else ""
+    if (
+        is_pass(overall)
+        and booking_mode in BOOKING_ACTION_MODES
+        and not as_list(integration.get("completion_proof"))
+    ):
+        collector.fail(
+            "contract-booking-completion-proof",
+            "completed booking-capable product must record provider confirmation proof or mark booking incomplete",
+        )
+
+
 def check_acceptance_contract(project_root: Path, collector: Collector) -> dict[str, Any] | None:
     contract_path = project_root / "docs" / "ACCEPTANCE_CONTRACT.json"
     if not contract_path.exists():
@@ -456,6 +547,8 @@ def check_acceptance_contract(project_root: Path, collector: Collector) -> dict[
                 collector.fail("contract-sample-policy", "local_functional or partial mode must define sample_data_policy")
             elif sample_policy.get("must_label_sample_mode") is not True:
                 collector.fail("contract-sample-label", "sample/local mode must label sample mode to the user")
+
+    check_integration_contract(contract, capability if isinstance(capability, dict) else None, collector)
 
     if open_input_required and not any(contains_any_marker(scenario, OUT_OF_SEED_MARKERS) for scenario in scenarios):
         collector.fail(

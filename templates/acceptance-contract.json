@@ -31,6 +31,18 @@
       "minimum_realistic_items_is_floor_not_ceiling": true
     }
   },
+  "integration_contract": {
+    "provider_candidates": [],
+    "required_live_integrations": [],
+    "provider_docs_checked": [],
+    "auth_env_vars": [],
+    "rate_limit_policy": "",
+    "cache_policy": "",
+    "terms_or_tos_constraints": [],
+    "booking_mode": "not_applicable",
+    "requires_final_user_confirmation": true,
+    "completion_proof": []
+  },
   "requirements": [
     {
       "id": "REQ-001",

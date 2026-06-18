@@ -41,3 +41,18 @@ If the inferred capability is central to the product promise, ask the user to ch
 - `partial`: pause or mark incomplete until dependency is available.
 
 Never hide the tradeoff by building only a tiny seed-data world.
+
+## Venue And Reservation Agent Shortcut
+
+If the idea mentions 회식, 맛집, 장소, 식당, 예약, Naver Map, Kakao Map, CatchTable, team dinner, restaurant, venue, place search, or booking, also read `references/venue-agent-playbook.md`.
+
+The council should treat these as likely central capabilities, not optional polish:
+
+- Free-text place or landmark input mapped to coordinates.
+- Live or API-ready place discovery through Kakao Local API, Naver Local Search API, Google Places, or another approved source.
+- Sourced venue facts: address, road address, phone, category, coordinates, place URL, distance, data source, and confidence.
+- Explainable ranking against headcount, budget, mood, alcohol type, access, and reservation route.
+- Booking flow with one explicit `booking_mode`: `official_api`, `provider_deeplink`, `browser_assisted`, `manual_call`, `unavailable`, or `not_applicable`.
+- Final user confirmation and confirmation proof before claiming a reservation is complete.
+
+Never use review text, ratings, atmosphere, price, availability, or booking status unless the implementation has an allowed source or reports the missing evidence plainly.

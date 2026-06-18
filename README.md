@@ -13,6 +13,7 @@ It is designed for builders who want the speed of vibe coding without letting an
 - Keeps a visual Factory Monitor in sync with state, decisions, handoffs, tasks, and gates.
 - Uses deterministic scripts to catch fake completion, stale monitor state, missing approvals, and incomplete factory runs.
 - Adds product-quality gates for real apps: input-driven behavior, UX review, consumer appeal, scope audit, browser evidence, and acceptance contracts.
+- Adds a venue/reservation agent playbook for team dinner, restaurant, map/place search, and booking apps so they propose live or API-ready provider integrations instead of collapsing into seeded mockups.
 - Blocks app implementation with `scripts/factory_preflight.py` until factory state and Direction Lock are ready.
 - Surfaces the monitor and decision summary whenever the workflow waits for the user's approval or selection.
 
@@ -58,6 +59,8 @@ The portable invariants are documented in `references/runtime-portability.md`.
 ## Best Fit
 
 Use this for lightweight cold-start side projects, especially Korean-first solo workflows. It is not trying to replace heavyweight SDLC frameworks. For regulated, enterprise, or deeply domain-specific products, use it as a control layer and add domain-specific review.
+
+For a team-dinner or restaurant agent, the default expectation is free-text place input, map/place provider planning, sourced venue reports, and an honest reservation workflow. If Naver Reservation, CatchTable, or another booking provider cannot be used through an official or allowed path, the workflow must ask for an approved fallback instead of pretending the booking is automated.
 
 ## Repository Layout
 

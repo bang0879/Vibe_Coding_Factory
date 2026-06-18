@@ -20,7 +20,7 @@
 
 ## Capability Realism
 
-- Capability mode: `live` / `user_data` / `local_functional` / `partial`
+- Capability mode: `live` / `api_ready` / `user_data` / `local_functional` / `partial`
 - Live/API dependencies and setup:
 - Approved fallback, if any:
 - Open-ended inputs to preserve:
@@ -28,6 +28,24 @@
 - Seed/sample data label:
 - Data replacement path:
 - Out-of-seed scenario to verify:
+
+## External Integration Plan
+
+Use this section when the app depends on maps, search, booking, payment, calendar, messaging, or another provider.
+
+- Provider adapters:
+- Provider docs checked:
+- Env vars and secret handling:
+- Server-side proxy/API route boundaries:
+- Rate limit and retry behavior:
+- Cache policy and freshness label:
+- Terms/ToS constraints:
+- Live-data unavailable behavior:
+- Booking state machine, if relevant:
+  - booking_mode:
+  - user confirmation gate:
+  - handoff/deep link/API action:
+  - confirmation proof captured:
 
 ## Feature Slices
 

@@ -143,6 +143,7 @@ class CapabilityRealismTests(unittest.TestCase):
         template = json.loads((ROOT / "templates" / "acceptance-contract.json").read_text(encoding="utf-8"))
 
         self.assertIn("capability_contract", template)
+        self.assertIn("integration_contract", template)
         self.assertIn("input_freedom", template["capability_contract"])
         self.assertIn("forbidden_downgrades", template["capability_contract"])
         self.assertTrue(any(item["id"] == "SCN-OUT-OF-SEED" for item in template["primary_scenarios"]))

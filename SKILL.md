@@ -81,6 +81,14 @@ Examples:
 
 Report these affordances as `candidate_capabilities[]`: each item must include user value, required integration or data, feasibility, fallback option, and whether the user must approve it. Do not implement an inferred capability until the user approves it, but do not omit the proposal when it is central to product quality.
 
+## Venue And Reservation Agent Rule
+
+When the idea mentions team dinners, restaurants, venues, local recommendations, map search, reservations, Naver Map, Kakao Map, CatchTable, or a "junior employee" style agent that should find real places, load `references/venue-agent-playbook.md` before the Decision Brief.
+
+Treat this as a real-world integration product by default. Discovery Council must propose map/place search, free-text place normalization, sourced venue reports, and booking workflow options before Direction Lock. Do not narrow the app into a few seeded venues, preset areas, or mock reports unless the user explicitly approves `local_functional` as a labeled fallback.
+
+If the approved promise includes booking or reservation, the final app may not claim a reservation is complete unless it records provider, venue, date/time, party size, status, and confirmation proof. Final booking submission always requires explicit user confirmation.
+
 ## Design Fidelity Lock Rule
 
 An approved design concept is a contract, not inspiration. Before implementation, Design Studio must convert the approved concept into concrete design fidelity anchors: first-screen layout, component inventory, visual tokens, spacing/density, responsive behavior, required states, and forbidden degradations.
@@ -166,6 +174,7 @@ Load only what is needed:
 - For complete product delivery, read `references/completion-harness.md` before task decomposition and again before marking any user-facing app task `done`.
 - For executable product contracts, deterministic completion checks, and fresh-review gates, read `references/factory-harness.md` before implementation and before final completion.
 - For domain-native high-quality capability options, read `references/domain-affordances.md` during Discovery Council before Direction Lock.
+- For team dinner, restaurant, venue, map/place search, or reservation agents, read `references/venue-agent-playbook.md` before Decision Brief and again before implementation.
 - For runtime portability across Codex, Claude Code, and generic coding agents, read `references/runtime-portability.md`.
 - For local self-audit scoring, read `references/benchmark-rubric.md` and run `scripts/benchmark_factory_skill.py`.
 - For lightweight cold-start side-project fit, read `references/cold-start-side-projects.md`.
@@ -176,6 +185,7 @@ Load only what is needed:
 - User-facing decision prompts and planning artifacts follow the User-Facing Korean Output Rule.
 - Real app delivery follows the No Silent Capability Downgrade Rule.
 - Discovery follows the Domain Affordance Discovery Rule.
+- Venue, restaurant, map/place, and reservation agents follow the Venue And Reservation Agent Rule.
 - UI implementation follows the Design Fidelity Lock Rule.
 - Agent-to-agent reports use Caveman format.
 - This skill's default niche is lightweight cold-start side projects, not heavyweight enterprise SDLC replacement.

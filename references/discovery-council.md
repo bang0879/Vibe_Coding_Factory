@@ -135,6 +135,8 @@ Use 2-3 options unless the direction is already clearly chosen.
 
 Before Direction Lock, add `candidate_capabilities[]` for natural high-quality features inferred from the domain. For example, place-based apps should propose map/place autocomplete, geocoding, radius filters, and provider constraints even if the user only said "location" or "venue".
 
+For venue, restaurant, team dinner, or reservation agents, use `references/venue-agent-playbook.md`. The council must explicitly cover live/API-ready map search, free-text place normalization, venue evidence sources, ranking/report quality, booking mode, and final confirmation proof. A seed list or a small preset area dropdown is a fallback option only when the user approves that downgrade.
+
 Each candidate must include:
 
 - Capability.
