@@ -19,6 +19,9 @@ class MonitorOpeningTests(unittest.TestCase):
             state_path = project / ".factory" / "factory-state.json"
             state_path.parent.mkdir()
             state_path.write_text(TEMPLATE_STATE.read_text(encoding="utf-8"), encoding="utf-8")
+            docs = project / "docs"
+            docs.mkdir()
+            (docs / "DECISION_BRIEF.md").write_text("# 결정 브리프\n\n문서 미리보기 테스트", encoding="utf-8")
 
             result = subprocess.run(
                 [
@@ -42,6 +45,8 @@ class MonitorOpeningTests(unittest.TestCase):
             self.assertTrue(dashboard.exists())
             dashboard_text = dashboard.read_text(encoding="utf-8")
             self.assertIn('"__embedded_snapshot": true', dashboard_text)
+            self.assertIn('id="fallback-documents"', dashboard_text)
+            self.assertIn("문서 미리보기 테스트", dashboard_text)
             self.assertIn("Codex Factory Orchestrator", dashboard_text)
 
             state = json.loads(state_path.read_text(encoding="utf-8"))
@@ -50,6 +55,7 @@ class MonitorOpeningTests(unittest.TestCase):
             self.assertEqual(monitor_view.parent.name, ".factory")
             self.assertTrue(state["report_sync"]["monitor_opened_at"])
             self.assertTrue(state["monitor_health"]["embedded_state_snapshot"])
+            self.assertTrue(state["monitor_health"]["embedded_document_snapshot"])
 
             verify = subprocess.run(
                 [
@@ -103,6 +109,8 @@ class MonitorOpeningTests(unittest.TestCase):
         self.assertIn("decision-history", dashboard)
         self.assertIn("renderAgentSteps", dashboard)
         self.assertIn("agent_steps", dashboard)
+        self.assertIn("fallback-documents", dashboard)
+        self.assertIn("embeddedDocuments", dashboard)
         self.assertIn("작업 기록 없음", dashboard)
 
     def test_verify_fails_when_monitor_view_path_is_wrong(self) -> None:

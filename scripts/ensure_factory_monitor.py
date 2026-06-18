@@ -16,6 +16,10 @@ from typing import Any
 
 STATE_SCRIPT_START = '<script id="fallback-state" type="application/json">'
 STATE_SCRIPT_END = "</script>"
+DOCUMENTS_SCRIPT_START = '<script id="fallback-documents" type="application/json">'
+DOCUMENTS_SCRIPT_END = "</script>"
+DOCUMENT_SUFFIXES = {".md", ".markdown", ".txt", ".json", ".yaml", ".yml"}
+MAX_EMBEDDED_DOCUMENT_BYTES = 256 * 1024
 
 
 def now() -> str:
@@ -50,19 +54,133 @@ def save_state(path: Path, state: dict[str, Any]) -> None:
     path.write_text(json.dumps(state, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
-def embed_state_snapshot(dashboard_path: Path, state: dict[str, Any]) -> None:
-    text = dashboard_path.read_text(encoding="utf-8")
-    start = text.find(STATE_SCRIPT_START)
+def script_safe_json(data: Any) -> str:
+    return json.dumps(data, ensure_ascii=False, indent=2).replace("</", "<\\/")
+
+
+def replace_json_script(text: str, start_marker: str, end_marker: str, data: Any, missing_message: str) -> str:
+    start = text.find(start_marker)
     if start == -1:
-        raise SystemExit("dashboard template is missing fallback-state script")
-    json_start = start + len(STATE_SCRIPT_START)
-    end = text.find(STATE_SCRIPT_END, json_start)
+        raise SystemExit(missing_message)
+    json_start = start + len(start_marker)
+    end = text.find(end_marker, json_start)
     if end == -1:
-        raise SystemExit("dashboard template fallback-state script is not closed")
+        raise SystemExit(f"{missing_message}: script is not closed")
+    return text[:json_start] + "\n" + script_safe_json(data) + "\n" + text[end:]
+
+
+def normalize_doc_path(project_root: Path, path_text: str) -> str:
+    text = str(path_text or "").strip().strip('"')
+    if text.startswith("file:///"):
+        text = text[8:]
+    text = text.replace("\\", "/")
+    candidate = Path(text)
+    if candidate.is_absolute():
+        try:
+            return candidate.resolve().relative_to(project_root).as_posix()
+        except ValueError:
+            parts = candidate.parts
+            if "docs" in parts:
+                index = parts.index("docs")
+                return "/".join(parts[index:])
+            return ""
+    normalized = text.lstrip("./")
+    marker = "/docs/"
+    lowered = normalized.lower()
+    if marker in lowered:
+        return normalized[lowered.index(marker) + 1 :]
+    return normalized
+
+
+def collect_state_doc_paths(state: dict[str, Any]) -> set[str]:
+    paths: set[str] = set()
+
+    def visit(value: Any) -> None:
+        if isinstance(value, dict):
+            for key, child in value.items():
+                if key in {"path", "artifact_path", "qa_evidence_path"} and isinstance(child, str):
+                    paths.add(child)
+                elif key in {"related_docs", "artifact_paths", "artifacts"}:
+                    for item in child if isinstance(child, list) else [child]:
+                        if isinstance(item, str):
+                            paths.add(item)
+                else:
+                    visit(child)
+        elif isinstance(value, list):
+            for item in value:
+                visit(item)
+
+    visit(state)
+    return paths
+
+
+def collect_document_snapshots(project_root: Path, state: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    documents: dict[str, dict[str, Any]] = {}
+    candidate_paths = {
+        "docs/DECISION_BRIEF.md",
+        "docs/DIRECTION_LOCK.md",
+        "docs/PRD.md",
+        "docs/GTM.md",
+        "docs/REQUIREMENTS.md",
+        "docs/IMPLEMENTATION_PLAN.md",
+        "docs/QA_EVIDENCE.md",
+        "docs/DESIGN_BRIEF.md",
+        "docs/ACCEPTANCE_CONTRACT.json",
+    }
+    candidate_paths.update(collect_state_doc_paths(state))
+    docs_dir = project_root / "docs"
+    if docs_dir.exists():
+        for path in docs_dir.rglob("*"):
+            if path.is_file() and path.suffix.lower() in DOCUMENT_SUFFIXES:
+                candidate_paths.add(path.relative_to(project_root).as_posix())
+
+    for raw_path in sorted(candidate_paths):
+        rel_path = normalize_doc_path(project_root, raw_path)
+        if not rel_path or ".." in Path(rel_path).parts:
+            continue
+        path = project_root / rel_path
+        if not path.exists() or not path.is_file() or path.suffix.lower() not in DOCUMENT_SUFFIXES:
+            continue
+        size = path.stat().st_size
+        if size > MAX_EMBEDDED_DOCUMENT_BYTES:
+            content = f"[Document not embedded because it is larger than {MAX_EMBEDDED_DOCUMENT_BYTES} bytes.]"
+        else:
+            content = path.read_text(encoding="utf-8-sig", errors="replace")
+        item = {
+            "path": rel_path,
+            "absolute_path": str(path.resolve()),
+            "updated_at": _dt.datetime.fromtimestamp(path.stat().st_mtime, _dt.timezone.utc).isoformat(),
+            "bytes": size,
+            "content": content,
+        }
+        documents[rel_path] = item
+        documents[str(path.resolve()).replace("\\", "/")] = item
+    return documents
+
+
+def embed_monitor_snapshots(dashboard_path: Path, state: dict[str, Any], documents: dict[str, Any]) -> None:
+    text = dashboard_path.read_text(encoding="utf-8")
     snapshot = dict(state)
     snapshot["__embedded_snapshot"] = True
-    snapshot_text = "\n" + json.dumps(snapshot, ensure_ascii=False, indent=2) + "\n"
-    dashboard_path.write_text(text[:json_start] + snapshot_text + text[end:], encoding="utf-8")
+    text = replace_json_script(
+        text,
+        STATE_SCRIPT_START,
+        STATE_SCRIPT_END,
+        snapshot,
+        "dashboard template is missing fallback-state script",
+    )
+    text = replace_json_script(
+        text,
+        DOCUMENTS_SCRIPT_START,
+        DOCUMENTS_SCRIPT_END,
+        documents,
+        "dashboard template is missing fallback-documents script",
+    )
+    dashboard_path.write_text(text, encoding="utf-8")
+
+
+def embed_state_snapshot(dashboard_path: Path, state: dict[str, Any], documents: dict[str, Any] | None = None) -> None:
+    embed_monitor_snapshots(dashboard_path, state, documents or {})
 
 
 def ensure_monitor(project_root: Path, skill_root: Path, state_path: Path, should_open: bool) -> dict[str, Any]:
@@ -104,11 +222,13 @@ def ensure_monitor(project_root: Path, skill_root: Path, state_path: Path, shoul
             "served_url": dashboard_uri,
             "served_matches_local": True,
             "embedded_state_snapshot": True,
+            "embedded_document_snapshot": True,
             "stale_reason": "",
         }
     )
     save_state(state_path, state)
-    embed_state_snapshot(dashboard_path, state)
+    documents = collect_document_snapshots(project_root, state)
+    embed_state_snapshot(dashboard_path, state, documents)
     opened = False
     if should_open:
         opened = bool(webbrowser.open(dashboard_uri))
@@ -124,6 +244,8 @@ def ensure_monitor(project_root: Path, skill_root: Path, state_path: Path, shoul
         "served_url": dashboard_uri,
         "opened": opened,
         "embedded_state_snapshot": True,
+        "embedded_document_snapshot": True,
+        "embedded_document_count": len({item["path"] for item in documents.values()}),
         "updated_at": now(),
     }
     (factory_dir / "monitor-meta.json").write_text(json.dumps(meta, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

@@ -101,6 +101,8 @@ OUT_OF_SEED_MARKERS = (
 )
 STATE_SCRIPT_START = '<script id="fallback-state" type="application/json">'
 STATE_SCRIPT_END = "</script>"
+DOCUMENTS_SCRIPT_START = '<script id="fallback-documents" type="application/json">'
+DOCUMENTS_SCRIPT_END = "</script>"
 
 
 class Finding:
@@ -147,15 +149,20 @@ def sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
-def strip_embedded_state(text: str) -> str:
-    start = text.find(STATE_SCRIPT_START)
+def strip_embedded_json_script(text: str, start_marker: str, end_marker: str, replacement: str) -> str:
+    start = text.find(start_marker)
     if start == -1:
         return text
-    json_start = start + len(STATE_SCRIPT_START)
-    end = text.find(STATE_SCRIPT_END, json_start)
+    json_start = start + len(start_marker)
+    end = text.find(end_marker, json_start)
     if end == -1:
         return text
-    return text[:json_start] + "\n__STATE_SNAPSHOT__\n" + text[end:]
+    return text[:json_start] + f"\n{replacement}\n" + text[end:]
+
+
+def strip_embedded_snapshots(text: str) -> str:
+    text = strip_embedded_json_script(text, STATE_SCRIPT_START, STATE_SCRIPT_END, "__STATE_SNAPSHOT__")
+    return strip_embedded_json_script(text, DOCUMENTS_SCRIPT_START, DOCUMENTS_SCRIPT_END, "__DOCUMENT_SNAPSHOTS__")
 
 
 def is_pass(value: Any) -> bool:
@@ -727,7 +734,7 @@ def check_dashboard(
         if template_hash != dashboard_hash:
             dashboard_text = dashboard_path.read_text(encoding="utf-8", errors="replace")
             template_text = template_path.read_text(encoding="utf-8", errors="replace")
-            if strip_embedded_state(dashboard_text) != strip_embedded_state(template_text):
+            if strip_embedded_snapshots(dashboard_text) != strip_embedded_snapshots(template_text):
                 collector.fail(
                     "stale-dashboard",
                     "project dashboard differs from current template beyond embedded state snapshot; refresh .factory/factory-dashboard.html",

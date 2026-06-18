@@ -343,6 +343,10 @@ code { display: inline-block; max-width: 100%; overflow-wrap: anywhere; backgrou
 }
 </script>
 
+<script id="fallback-documents" type="application/json">
+{}
+</script>
+
 <script>
 const STATUS_LABELS = {
   idle: "idle", queued: "queued", pending: "pending", running: "running", reviewing: "reviewing",
@@ -368,6 +372,25 @@ const statusLabel = (status) => STATUS_LABELS[normalize(status)] || status || "i
 const badge = (status) => `<span class="badge ${normalize(status)}">${esc(statusLabel(status))}</span>`;
 const shortList = (items, empty = "none") => Array.isArray(items) && items.length ? items.slice(0, 5).map((item) => `<li>${esc(item)}</li>`).join("") : `<li>${esc(empty)}</li>`;
 const docButton = (path, label) => path ? `<button class="doc-link" data-doc="${esc(path)}">${esc(label || path)}</button>` : "";
+let EMBEDDED_DOCUMENTS = null;
+
+function normalizeDocPath(path) {
+  return String(path || "")
+    .replace(/^file:\/\/\//i, "")
+    .replace(/\\/g, "/")
+    .replace(/^\.?\//, "")
+    .replace(/^.*?\/docs\//i, "docs/");
+}
+
+function embeddedDocuments() {
+  if (EMBEDDED_DOCUMENTS) return EMBEDDED_DOCUMENTS;
+  try {
+    EMBEDDED_DOCUMENTS = JSON.parse(document.getElementById("fallback-documents").textContent || "{}");
+  } catch (error) {
+    EMBEDDED_DOCUMENTS = {};
+  }
+  return EMBEDDED_DOCUMENTS;
+}
 
 async function loadState() {
   const stateUrl = new URL("./factory-state.json", window.location.href);
@@ -606,14 +629,21 @@ async function openDoc(path) {
   title.textContent = path;
   body.textContent = `Loading ${path}...`;
   modal.hidden = false;
-  const url = new URL(`../${path}`, window.location.href);
-  url.searchParams.set("ts", Date.now());
+  const docs = embeddedDocuments();
+  const normalizedPath = normalizeDocPath(path);
+  const embedded = docs[path] || docs[normalizedPath];
   try {
+    const url = new URL(`../${normalizedPath}`, window.location.href);
+    url.searchParams.set("ts", Date.now());
     const response = await fetch(url.href, { cache: "no-store" });
     if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
     body.textContent = await response.text();
   } catch (error) {
-    body.textContent = `${path}\n\nCould not load document: ${error.message}`;
+    if (embedded && typeof embedded.content === "string") {
+      body.textContent = `${embedded.path || path}\nSource: embedded monitor snapshot\nUpdated: ${embedded.updated_at || "unknown"}\n\n${embedded.content}`;
+    } else {
+      body.textContent = `${path}\n\nCould not load document: ${error.message}\n\nNo embedded snapshot was found. Refresh the monitor with ensure_factory_monitor.py so local file previews are embedded.`;
+    }
   }
 }
 
